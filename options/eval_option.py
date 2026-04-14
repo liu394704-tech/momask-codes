@@ -7,6 +7,9 @@ class EvalT2MOptions(BaseOptions):
         self.parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
 
         self.parser.add_argument('--ext', type=str, default='text2motion', help='Extension of the result file or folder')
+        self.parser.add_argument('--overwrite', action='store_true',
+                                 help='If set, write to ./generation/<ext>/ even when that folder already exists. '
+                                      'Default: pick a new name (<ext>_run1, _run2, ...) to avoid overwriting.')
         self.parser.add_argument("--num_batch", default=2, type=int,
                                  help="Number of batch for generation")
         self.parser.add_argument("--repeat_times", default=1, type=int,
@@ -35,4 +38,9 @@ class EvalT2MOptions(BaseOptions):
         self.parser.add_argument('--source_motion', default='example_data/000612.npy', type=str, help="Source motion path for editing. (new_joint_vecs format .npy file)")
         self.parser.add_argument("--motion_length", default=0, type=int,
                                  help="Motion length for generation, only applicable with single text prompt.")
+        self.parser.add_argument(
+            "--no_video_render",
+            action="store_true",
+            help="Skip MP4 preview (plot_3d_motion). Still exports BVH and joint .npys under ./generation/<ext>/.",
+        )
         self.is_train = False

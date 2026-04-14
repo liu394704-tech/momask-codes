@@ -1,0 +1,3 @@
+# Optional: LLM bridge (install in same or separate venv)
+zhipuai>=2.0.0
+dashscope>=1.14.0

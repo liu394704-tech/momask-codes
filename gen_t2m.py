@@ -1,6 +1,10 @@
 import os
 from os.path import join as pjoin
 
+import matplotlib
+
+matplotlib.use("Agg")
+
 import torch
 import torch.nn.functional as F
 
@@ -110,6 +114,17 @@ if __name__ == '__main__':
     torch.autograd.set_detect_anomaly(True)
 
     dim_pose = 251 if opt.dataset_name == 'kit' else 263
+
+    base_ext = opt.ext
+    if not opt.overwrite:
+        gen_root = './generation'
+        if os.path.exists(pjoin(gen_root, base_ext)):
+            run_id = 1
+            while os.path.exists(pjoin(gen_root, '%s_run%d' % (base_ext, run_id))):
+                run_id += 1
+            opt.ext = '%s_run%d' % (base_ext, run_id)
+            print('Folder ./generation/%s exists; saving to ./generation/%s (pass --overwrite to replace).' % (
+                base_ext, opt.ext), flush=True)
 
     # out_dir = pjoin(opt.check)
     root_dir = pjoin(opt.checkpoints_dir, opt.dataset_name, opt.name)
@@ -235,7 +250,7 @@ if __name__ == '__main__':
             data = inv_transform(pred_motions)
 
         for k, (caption, joint_data)  in enumerate(zip(captions, data)):
-            print("---->Sample %d: %s %d"%(k, caption, m_length[k]))
+            print("---->Sample %d: %s %d" % (k, caption, int(m_length[k])), flush=True)
             animation_path = pjoin(animation_dir, str(k))
             joint_path = pjoin(joints_dir, str(k))
 
@@ -245,17 +260,26 @@ if __name__ == '__main__':
             joint_data = joint_data[:m_length[k]]
             joint = recover_from_ric(torch.from_numpy(joint_data).float(), 22).numpy()
 
+            print("     exporting BVH (IK)...", flush=True)
             bvh_path = pjoin(animation_path, "sample%d_repeat%d_len%d_ik.bvh"%(k, r, m_length[k]))
             _, ik_joint = converter.convert(joint, filename=bvh_path, iterations=100)
 
+            print("     exporting BVH (no foot IK)...", flush=True)
             bvh_path = pjoin(animation_path, "sample%d_repeat%d_len%d.bvh" % (k, r, m_length[k]))
             _, joint = converter.convert(joint, filename=bvh_path, iterations=100, foot_ik=False)
-
 
             save_path = pjoin(animation_path, "sample%d_repeat%d_len%d.mp4"%(k, r, m_length[k]))
             ik_save_path = pjoin(animation_path, "sample%d_repeat%d_len%d_ik.mp4"%(k, r, m_length[k]))
 
-            plot_3d_motion(ik_save_path, kinematic_chain, ik_joint, title=caption, fps=20)
-            plot_3d_motion(save_path, kinematic_chain, joint, title=caption, fps=20)
+            if getattr(opt, "no_video_render", False):
+                print("     skip MP4 (--no_video_render); exporting joints/BVH only.", flush=True)
+            else:
+                print("     rendering MP4 (IK, %d frames, slow on CPU)..." % int(m_length[k]), flush=True)
+                plot_3d_motion(ik_save_path, kinematic_chain, ik_joint, title=caption, fps=20)
+                print("     rendering MP4 (raw joints)...", flush=True)
+                plot_3d_motion(save_path, kinematic_chain, joint, title=caption, fps=20)
             np.save(pjoin(joint_path, "sample%d_repeat%d_len%d.npy"%(k, r, m_length[k])), joint)
             np.save(pjoin(joint_path, "sample%d_repeat%d_len%d_ik.npy"%(k, r, m_length[k])), ik_joint)
+            print("     saved under %s and %s" % (animation_path, joint_path), flush=True)
+
+    print("Done. Outputs in ./generation/%s/" % opt.ext, flush=True)
