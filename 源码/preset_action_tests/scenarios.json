@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "description": "Preset emotion -> ActionGroup mapping scenarios (no MoMask).",
+  "strong_threshold": 0.55,
+  "blocked_actions": [
+    "left_shot_fast",
+    "right_shot_fast",
+    "left_uppercut",
+    "right_uppercut",
+    "left_kick",
+    "right_kick",
+    "wing_chun"
+  ],
+  "mapping_expectations": {
+    "neutral": {"mild": [], "strong": []},
+    "happy": {
+      "mild": ["wave", "stepping"],
+      "strong": ["chest", "wave", "twist"]
+    },
+    "unhappy": {
+      "mild": ["bow", "jugong"],
+      "strong": ["squat", "bow", "jugong"]
+    },
+    "surprised": {
+      "mild": ["twist", "stepping"],
+      "strong": ["back_fast", "twist", "stand"]
+    }
+  },
+  "live_checklist": [
+    {
+      "id": "L1",
+      "emotion": "neutral",
+      "how": "放松脸看镜头 5–8 秒",
+      "expect": "可识别为 neutral，不触发动作"
+    },
+    {
+      "id": "L2",
+      "emotion": "happy",
+      "intensity": "mild",
+      "how": "轻微微笑，保持稳定",
+      "expect": "触发 wave 或 stepping，随后 stand + cooldown"
+    },
+    {
+      "id": "L3",
+      "emotion": "happy",
+      "intensity": "strong",
+      "how": "明显大笑/开怀笑",
+      "expect": "触发 chest / wave / twist 之一"
+    },
+    {
+      "id": "L4",
+      "emotion": "unhappy",
+      "intensity": "mild",
+      "how": "轻微皱眉或嘴角下垂",
+      "expect": "触发 bow 或 jugong"
+    },
+    {
+      "id": "L5",
+      "emotion": "unhappy",
+      "intensity": "strong",
+      "how": "明显难过/生气表情",
+      "expect": "触发 squat / bow / jugong 之一"
+    },
+    {
+      "id": "L6",
+      "emotion": "surprised",
+      "intensity": "mild",
+      "how": "轻微抬眉",
+      "expect": "触发 twist 或 stepping"
+    },
+    {
+      "id": "L7",
+      "emotion": "surprised",
+      "intensity": "strong",
+      "how": "明显惊讶（抬眉+张嘴）",
+      "expect": "触发 back_fast / twist / stand 之一"
+    },
+    {
+      "id": "L8",
+      "emotion": "happy",
+      "how": "同一情绪在 12s 内重复做",
+      "expect": "同情绪间隔内不重复触发"
+    }
+  ],
+  "synthetic_cases": [
+    {
+      "id": "S1",
+      "emotion": "happy",
+      "confidence": 0.42,
+      "expect_intensity": "mild",
+      "expect_action_in": ["wave", "stepping"]
+    },
+    {
+      "id": "S2",
+      "emotion": "happy",
+      "confidence": 0.72,
+      "expect_intensity": "strong",
+      "expect_action_in": ["chest", "wave", "twist"]
+    },
+    {
+      "id": "S3",
+      "emotion": "unhappy",
+      "confidence": 0.40,
+      "expect_intensity": "mild",
+      "expect_action_in": ["bow", "jugong"]
+    },
+    {
+      "id": "S4",
+      "emotion": "unhappy",
+      "confidence": 0.68,
+      "expect_intensity": "strong",
+      "expect_action_in": ["squat", "bow", "jugong"]
+    },
+    {
+      "id": "S5",
+      "emotion": "surprised",
+      "confidence": 0.50,
+      "expect_intensity": "mild",
+      "expect_action_in": ["twist", "stepping"]
+    },
+    {
+      "id": "S6",
+      "emotion": "surprised",
+      "confidence": 0.80,
+      "expect_intensity": "strong",
+      "expect_action_in": ["back_fast", "twist", "stand"]
+    },
+    {
+      "id": "S7",
+      "emotion": "neutral",
+      "confidence": 0.90,
+      "expect_intensity": "strong",
+      "expect_action_in": []
+    },
+    {
+      "id": "S8",
+      "emotion": "happy",
+      "confidence": 0.60,
+      "expect_intensity": "strong",
+      "repeat": 3,
+      "expect_rotation": true,
+      "expect_action_in": ["chest", "wave", "twist"]
+    }
+  ]
+}
