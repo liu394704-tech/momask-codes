@@ -21,6 +21,8 @@ class Perception:
     vision_conf: float = 0.0
     vision_intensity: Optional[str] = None
     face_found: bool = False
+    face_actions: List[str] = field(default_factory=list)
+    emotion_scores: Dict[str, float] = field(default_factory=dict)
     transcript: str = ""
     audio_emotion: Optional[str] = None
     audio_conf: float = 0.0
@@ -66,6 +68,8 @@ class TrackBResult:
     joints_path: Optional[str] = None
     prompt: str = ""
     elapsed_s: float = 0.0
+    load_s: float = 0.0
+    gen_s: float = 0.0
     error: Optional[str] = None
     dry_run: bool = False
 

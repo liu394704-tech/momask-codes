@@ -1,7 +1,12 @@
 import operator
 
 import numpy as np
-import numpy.core.umath_tests as ut
+try:
+    import numpy.core.umath_tests as ut
+except ImportError:  # numpy>=2 removed this module
+    class _UmathTestsCompat:
+        matrix_multiply = staticmethod(np.matmul)
+    ut = _UmathTestsCompat()
 
 from visualization.Quaternions import Quaternions
 

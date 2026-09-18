@@ -1,0 +1,21 @@
+﻿id,mode,passed,decision_s,emotion,intent,action_group,action_prompt,fallback,confidence,error,chk_json_ok,chk_prompt_nonempty,chk_prompt_is_englishish,chk_groups_list,chk_groups_whitelist,chk_groups_len_ok,chk_no_attack_when_forbidden,chk_expect_group_hit,chk_expect_fallback,chk_keyword_hit
+E01,mock,True,0.0,happy,greeting,"[""wave""]",a person waves cheerfully with the right hand,False,0.86,,True,True,True,True,True,True,True,True,True,True
+E02,mock,True,0.0,happy,play,"[""chest"", ""twist""]",a person celebrates by raising both arms and twists happily,False,0.84,,True,True,True,True,True,True,True,True,True,True
+E03,mock,True,0.0,happy,play,"[""twist""]",a person twists the torso side to side playfully,False,0.8,,True,True,True,True,True,True,True,True,True,True
+E04,mock,True,0.0,sad,comfort_request,"[""bow""]",a person bows gently and slowly in a caring way,False,0.75,,True,True,True,True,True,True,True,True,True,True
+E05,mock,True,0.0,sad,comfort_request,"[""bow""]",a person bows gently and slowly in a caring way,False,0.7,,True,True,True,True,True,True,True,True,True,True
+E06,mock,True,0.0,angry,help,"[""stand""]",a person stands still calmly with open relaxed arms,False,0.72,,True,True,True,True,True,True,True,True,True,True
+E07,mock,True,0.0,angry,unknown,"[""stand""]",a person stands still and keeps a calm posture,False,0.68,,True,True,True,True,True,True,True,True,True,True
+E08,mock,True,0.0,fearful,help,"[""stand""]",a person stands still and slowly raises both hands in a reassuring way,False,0.77,,True,True,True,True,True,True,True,True,True,True
+E09,mock,True,0.0,fearful,comfort_request,"[""bow""]",a person bows gently and steps slightly back,False,0.73,,True,True,True,True,True,True,True,True,True,True
+E10,mock,True,0.0,disgust,stop,"[""stand"", ""back_fast""]",a person steps back and waves a hand to refuse,False,0.7,,True,True,True,True,True,True,True,True,True,True
+E11,mock,True,0.0,surprised,unknown,"[""wave""]",a person raises both hands briefly in surprise then waves,False,0.76,,True,True,True,True,True,True,True,True,True,True
+E12,mock,True,0.0,neutral,unknown,"[""stand""]",a person stands still and nods once,False,0.66,,True,True,True,True,True,True,True,True,True,True
+E13,mock,True,0.0,neutral,play,"[""go_forward""]",a person walks forward a few steps,False,0.83,,True,True,True,True,True,True,True,True,True,True
+E14,mock,True,0.0,neutral,play,"[""back_fast""]",a person steps backward carefully,False,0.82,,True,True,True,True,True,True,True,True,True,True
+E15,mock,True,0.0,neutral,play,"[""turn_left""]",a person turns left in place,False,0.8,,True,True,True,True,True,True,True,True,True,True
+E16,mock,True,0.0,happy,greeting,"[""wave""]",a person waves goodbye with the right hand,False,0.85,,True,True,True,True,True,True,True,True,True,True
+E17,mock,True,0.0,neutral,play,"[""squat""]",a person performs a squat and stands back up,False,0.81,,True,True,True,True,True,True,True,True,True,True
+E18,mock,True,0.0,unknown,unknown,"[""stand""]",a person stands still safely and waits,True,0.28,,True,True,True,True,True,True,True,True,True,True
+E19,mock,True,0.0,happy,greeting,"[""wave""]",a person waves cheerfully with the right hand,False,0.74,,True,True,True,True,True,True,True,True,True,True
+E20,mock,True,0.0,sad,comfort_request,"[""bow""]",a person bows gently and slowly in a caring way,False,0.71,,True,True,True,True,True,True,True,True,True,True

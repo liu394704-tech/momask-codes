@@ -1,0 +1,10 @@
+{
+  "mode": "mock",
+  "model": "mock_rules",
+  "n": 20,
+  "n_pass": 20,
+  "pass_rate": 1.0,
+  "decision_mean_s": 0.0,
+  "decision_p95_s": 0.0,
+  "results_csv": "experiment/e2e_spec/decision_smoke_results.csv"
+}

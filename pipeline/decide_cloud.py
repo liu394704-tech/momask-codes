@@ -45,75 +45,14 @@ def _extract_json(text: str) -> Dict[str, Any]:
 
 
 def mock_decide(perception: Perception) -> Decision:
-    """Deterministic offline decide for baseline / CI without API key."""
-    emo = perception.vision_emotion or "neutral"
-    conf = float(perception.vision_conf or 0.0)
-    transcript = (perception.transcript or "").strip()
-    intent = "unknown"
-    prompt = ""
-    group = []
-    fallback = False
+    """Deterministic offline decide (alias of edge rules). No cloud API."""
+    from .decide_edge import edge_rule_decide
 
-    if not perception.face_found and not transcript:
-        fallback = True
-        group = ["stand"]
-        conf = min(conf, 0.3)
-    elif emo == "happy":
-        intent = "greeting" if not transcript else "play"
-        group = ["wave"] if (perception.vision_intensity or "mild") == "mild" else ["chest"]
-        prompt = (
-            "a person happily waves with the right hand and then stands with an open posture"
-            if group[0] == "wave"
-            else "a person excitedly pumps the chest and waves both hands in celebration"
-        )
-        conf = max(conf, 0.55)
-    elif emo in ("unhappy", "sad", "angry"):
-        intent = "comfort_request"
-        group = ["bow"] if (perception.vision_intensity or "mild") == "mild" else ["squat"]
-        prompt = (
-            "a person gently bows the head and then slowly waves in a caring way"
-            if group[0] == "bow"
-            else "a person squats slightly with a subdued posture then gives a small reassuring wave"
-        )
-        conf = max(conf, 0.5)
-    elif emo == "surprised":
-        intent = "unknown"
-        group = ["twist"] if (perception.vision_intensity or "mild") == "mild" else ["back_fast"]
-        prompt = (
-            "a person twists the torso in mild surprise then steps in place"
-            if group[0] == "twist"
-            else "a person steps back quickly in surprise then stands still"
-        )
-        conf = max(conf, 0.5)
-    else:
-        intent = "unknown"
-        group = ["stand"]
-        prompt = "a person stands still with a relaxed neutral posture"
-        if conf < 0.45:
-            fallback = True
-            prompt = ""
-
-    if transcript and ("累" in transcript or "陪" in transcript):
-        intent = "comfort_request"
-        group = ["bow"]
-        prompt = (
-            "a person gently bows and then waves slowly with one hand as if offering comfort"
-        )
-        conf = max(conf, 0.7)
-        fallback = False
-
-    return Decision(
-        session_id=perception.session_id,
-        emotion=emo if emo != "unhappy" else "sad",
-        intent=intent,
-        confidence=float(conf),
-        action_prompt=prompt,
-        action_group=group,
-        motion_length_hint=0,
-        fallback=fallback,
-        reason="mock_decide",
-        ok=True,
-    )
+    d = edge_rule_decide(perception)
+    # keep historical reason tag for tests that may look at it
+    if d.reason.startswith("edge_rule"):
+        d.reason = "mock_decide:" + d.reason
+    return d
 
 
 def cloud_decide(

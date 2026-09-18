@@ -1,0 +1,103 @@
+# 100 emotion-aware text-to-motion prompts for Pi latency/quality bench.
+# format: emotion|english action description
+# emotions: neutral happy sad angry fearful disgust surprised (balanced ~14 each + filler)
+neutral|a person walks forward at a normal pace.
+neutral|a person stands still with arms relaxed at the sides.
+neutral|a person sits down calmly on a chair.
+neutral|a person stands up from a sitting position.
+neutral|a person turns around slowly to look behind.
+neutral|a person picks up a small object from a table.
+neutral|a person opens a door and walks through it.
+neutral|a person stretches both arms casually to the sides.
+neutral|a person walks in a small circle at a steady pace.
+neutral|a person nods the head once and then stands still.
+neutral|a person points forward with the right hand.
+neutral|a person places both hands on the hips and waits.
+neutral|a person walks backward a few steps carefully.
+neutral|a person sits cross-legged on the floor quietly.
+happy|a person skips forward joyfully with light bouncing steps.
+happy|a person jumps up and pumps both fists in celebration.
+happy|a person dances happily swaying side to side with arms raised.
+happy|a person waves both hands overhead with excitement.
+happy|a person hops in place cheerfully while smiling posture.
+happy|a person spins around playfully with arms stretched out.
+happy|a person claps hands quickly in a joyful rhythm.
+happy|a person walks proudly with chest out and a springy step.
+happy|a person leaps forward with a big happy stride.
+happy|a person throws both arms up in victory and jumps once.
+happy|a person does a joyful jumping jack repeatedly.
+happy|a person dances in a small circle with bouncing knees.
+happy|a person high-fives the air with the right hand excitedly.
+happy|a person laughs with the body shaking while standing.
+sad|a person walks slowly with slumped shoulders and head down.
+sad|a person sits down heavily and hangs the head sadly.
+sad|a person covers the face with both hands in sorrow.
+sad|a person sighs, drops the arms, and stands still weakly.
+sad|a person walks with heavy dragging feet looking down.
+sad|a person kneels down and lowers the head to the chest.
+sad|a person hugs themselves tightly while standing still.
+sad|a person lies down on the back slowly in a tired way.
+sad|a person turns away slowly with a defeated posture.
+sad|a person sits on the floor hugging the knees sadly.
+sad|a person shakes the head slowly while looking at the ground.
+sad|a person walks backward hesitantly with drooping arms.
+sad|a person reaches out weakly then pulls the hand back.
+sad|a person stands still and breathes deeply with a sad posture.
+angry|a person stomps the feet angrily while marching forward.
+angry|a person punches forward hard with the right fist.
+angry|a person throws an angry punch combination with both fists.
+angry|a person crosses the arms tightly over the chest in anger.
+angry|a person kicks hard with the right leg in frustration.
+angry|a person shakes both fists beside the body angrily.
+angry|a person paces back and forth with sharp aggressive steps.
+angry|a person points accusingly forward with a stiff arm.
+angry|a person turns sharply and storms away in anger.
+angry|a person slams an invisible table with both hands.
+angry|a person stamps the right foot repeatedly in rage.
+angry|a person pushes something away forcefully with both hands.
+angry|a person raises both arms then chops downward angrily.
+angry|a person stands in a tense fighting stance ready to strike.
+fearful|a person crouches low and looks around cautiously.
+fearful|a person backs away slowly with hands raised protectively.
+fearful|a person freezes suddenly and stands completely still.
+fearful|a person sneaks forward crouched and very slow.
+fearful|a person ducks down quickly as if avoiding danger.
+fearful|a person shivers while wrapping the arms around the body.
+fearful|a person turns the head quickly left and right in fear.
+fearful|a person steps back suddenly and raises both hands.
+fearful|a person crouches behind an invisible cover trembling.
+fearful|a person walks on tiptoe nervously looking around.
+fearful|a person jumps back in fright then freezes.
+fearful|a person holds both hands in front of the face protectively.
+fearful|a person curls into a small crouched pose on the ground.
+fearful|a person runs a few steps away then stops and looks back.
+disgust|a person turns the face away and waves a hand dismissively.
+disgust|a person steps back while pushing both hands outward.
+disgust|a person covers the nose and mouth with one hand.
+disgust|a person shakes the head firmly and steps sideways away.
+disgust|a person recoils the upper body backward in disgust.
+disgust|a person brushes something off the clothes quickly.
+disgust|a person points at the ground then turns away abruptly.
+disgust|a person holds both palms out as if refusing something.
+disgust|a person leans away to the left with a twisted torso.
+disgust|a person stomps lightly then walks away dismissively.
+disgust|a person shrugs sharply and turns the back to the side.
+disgust|a person wipes the hands on the pants as if unclean.
+disgust|a person looks down then kicks something aside lightly.
+disgust|a person walks past quickly without looking back.
+surprised|a person jumps back suddenly with both arms raised.
+surprised|a person freezes with both hands open beside the face.
+surprised|a person leans forward suddenly then stands upright fast.
+surprised|a person turns the head quickly and raises both eyebrows posture.
+surprised|a person takes a quick step back with arms flung out.
+surprised|a person gasps with the chest rising and hands near the chest.
+surprised|a person spins halfway around in sudden surprise.
+surprised|a person points forward suddenly with a startled posture.
+surprised|a person hops once then opens both arms wide.
+surprised|a person ducks then pops up quickly looking around.
+surprised|a person claps once sharply then stands still surprised.
+surprised|a person raises both hands overhead in sudden amazement.
+surprised|a person steps sideways quickly as if startled by something.
+surprised|a person looks up suddenly and reaches toward the sky.
+neutral|a person walks forward then stops and stands naturally.
+happy|a person twirls once happily and ends with open arms.

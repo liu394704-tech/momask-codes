@@ -1,0 +1,3 @@
+# 开发 / 标准测试（与训练环境 requirements.txt 分离安装）
+# 默认单元测试使用标准库 unittest，无需安装 pytest。
+pytest>=7.0.0,<9

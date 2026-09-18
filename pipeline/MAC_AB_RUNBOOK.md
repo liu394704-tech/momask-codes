@@ -75,6 +75,24 @@ python -m pipeline.run_mac_ab --once --mock-perception --mock-decide --gpu-id -1
 
 ---
 
+## 5. 实时窗口：视觉 + 语音 + 云端 Decide（看 prompt）
+
+单独脚本，开摄像头窗口，实时显示情绪；按键后录音 / ASR / 云端 LLM，并在窗口里显示 MoMask 用的 `action_prompt`（本脚本不跑 MoMask）。
+
+```bash
+export OPENAI_API_KEY='...'
+export OPENAI_BASE_URL='https://www.dmxapi.cn/v1'
+export OPENAI_MODEL='gpt-4o-mini'
+export WHISPER_MODEL='gpt-4o-transcribe'
+
+源码/.venv-emotion-arm/bin/python -m pipeline.run_mac_live_decide_ui --mic-sec 3.5
+```
+
+窗口快捷键：`SPACE` 麦克风+Decide · `D` 仅视觉 Decide · `A` 自动轮询 · `C` 重标定 · `S` 保存 JSON · `ESC` 退出。  
+结果目录：`pipeline_runs/live_decide_<stamp>/`。
+
+---
+
 ## 降级规则（已实现）
 
 - `confidence < 0.45` / `fallback` / 无 prompt / Decide 失败 → 本轮 **只 A**

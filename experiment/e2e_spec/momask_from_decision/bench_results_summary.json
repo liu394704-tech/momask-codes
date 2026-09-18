@@ -1,0 +1,81 @@
+{
+  "device": "cpu",
+  "threads": 4,
+  "time_steps": 18,
+  "skip_recover": false,
+  "model_load_s": 3.18,
+  "n_prompts_total": 20,
+  "n_warmup": 0,
+  "n_counted": 20,
+  "gen_mean_s": 0.2456,
+  "recover_mean_s": 0.0002,
+  "total_mean_s": 0.2459,
+  "total_median_s": 0.2512,
+  "total_p95_s": 0.2859,
+  "by_emotion": {
+    "angry": {
+      "n": 2,
+      "gen_mean_s": 0.2465,
+      "total_mean_s": 0.2467,
+      "mean_speed": 0.002544,
+      "mean_jerk": 0.002138,
+      "valid_ratio_mean": 1.0
+    },
+    "disgust": {
+      "n": 1,
+      "gen_mean_s": 0.2118,
+      "total_mean_s": 0.212,
+      "mean_speed": 0.003805,
+      "mean_jerk": 0.00267,
+      "valid_ratio_mean": 1.0
+    },
+    "fearful": {
+      "n": 2,
+      "gen_mean_s": 0.2372,
+      "total_mean_s": 0.2374,
+      "mean_speed": 0.005369,
+      "mean_jerk": 0.003087,
+      "valid_ratio_mean": 1.0
+    },
+    "happy": {
+      "n": 5,
+      "gen_mean_s": 0.2463,
+      "total_mean_s": 0.2466,
+      "mean_speed": 0.009272,
+      "mean_jerk": 0.00546,
+      "valid_ratio_mean": 1.0
+    },
+    "neutral": {
+      "n": 5,
+      "gen_mean_s": 0.2363,
+      "total_mean_s": 0.2365,
+      "mean_speed": 0.015156,
+      "mean_jerk": 0.00507,
+      "valid_ratio_mean": 1.0
+    },
+    "sad": {
+      "n": 3,
+      "gen_mean_s": 0.273,
+      "total_mean_s": 0.2732,
+      "mean_speed": 0.005346,
+      "mean_jerk": 0.003085,
+      "valid_ratio_mean": 1.0
+    },
+    "surprised": {
+      "n": 1,
+      "gen_mean_s": 0.2536,
+      "total_mean_s": 0.2538,
+      "mean_speed": 0.005189,
+      "mean_jerk": 0.003059,
+      "valid_ratio_mean": 1.0
+    },
+    "unknown": {
+      "n": 1,
+      "gen_mean_s": 0.248,
+      "total_mean_s": 0.2483,
+      "mean_speed": 0.002519,
+      "mean_jerk": 0.002736,
+      "valid_ratio_mean": 1.0
+    }
+  }
+}

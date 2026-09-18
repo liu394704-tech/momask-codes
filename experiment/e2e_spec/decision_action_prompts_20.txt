@@ -1,0 +1,20 @@
+happy|a person waves cheerfully with the right hand
+happy|a person celebrates by raising both arms and twists happily
+happy|a person twists the torso side to side playfully
+sad|a person bows gently and slowly in a caring way
+sad|a person bows gently and slowly in a caring way
+angry|a person stands still calmly with open relaxed arms
+angry|a person stands still and keeps a calm posture
+fearful|a person stands still and slowly raises both hands in a reassuring way
+fearful|a person bows gently and steps slightly back
+disgust|a person steps back and waves a hand to refuse
+surprised|a person raises both hands briefly in surprise then waves
+neutral|a person stands still and nods once
+neutral|a person walks forward a few steps
+neutral|a person steps backward carefully
+neutral|a person turns left in place
+happy|a person waves goodbye with the right hand
+neutral|a person performs a squat and stands back up
+unknown|a person stands still safely and waits
+happy|a person waves cheerfully with the right hand
+sad|a person bows gently and slowly in a caring way

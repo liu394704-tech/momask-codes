@@ -1,0 +1,183 @@
+[
+  {
+    "id": "E01",
+    "fused": {"emotion": "happy", "intent": "greeting", "urgency": "low", "confidence": 0.86},
+    "vision": {"face_detected": true, "emotion": "happy", "emotion_conf": 0.88, "gesture": "wave", "notes": "smiling"},
+    "audio": {"transcript": "你好呀", "emotion": "happy", "emotion_conf": 0.8, "language": "zh"},
+    "expect_action_group_any": ["wave"],
+    "expect_prompt_keywords": ["wave", "hello", "greet"],
+    "allow_attack": false
+  },
+  {
+    "id": "E02",
+    "fused": {"emotion": "happy", "intent": "play", "urgency": "low", "confidence": 0.84},
+    "vision": {"face_detected": true, "emotion": "happy", "emotion_conf": 0.85, "gesture": null, "notes": "excited"},
+    "audio": {"transcript": "太好了，庆祝一下", "emotion": "happy", "emotion_conf": 0.82, "language": "zh"},
+    "expect_action_group_any": ["chest", "twist", "wave"],
+    "expect_prompt_keywords": ["celebrat", "jump", "arms", "victory"],
+    "allow_attack": false
+  },
+  {
+    "id": "E03",
+    "fused": {"emotion": "happy", "intent": "play", "urgency": "low", "confidence": 0.8},
+    "vision": {"face_detected": true, "emotion": "happy", "emotion_conf": 0.79, "gesture": null, "notes": "rhythmic"},
+    "audio": {"transcript": "我们一起扭扭腰吧", "emotion": "happy", "emotion_conf": 0.77, "language": "zh"},
+    "expect_action_group_any": ["twist"],
+    "expect_prompt_keywords": ["twist", "sway", "dance"],
+    "allow_attack": false
+  },
+  {
+    "id": "E04",
+    "fused": {"emotion": "sad", "intent": "comfort_request", "urgency": "low", "confidence": 0.75},
+    "vision": {"face_detected": true, "emotion": "sad", "emotion_conf": 0.8, "gesture": null, "notes": "slumped"},
+    "audio": {"transcript": "我今天有点累，陪我一下吧", "emotion": "sad", "emotion_conf": 0.7, "language": "zh"},
+    "expect_action_group_any": ["bow", "wave"],
+    "expect_prompt_keywords": ["gentle", "bow", "care", "slow", "wave"],
+    "allow_attack": false
+  },
+  {
+    "id": "E05",
+    "fused": {"emotion": "sad", "intent": "comfort_request", "urgency": "low", "confidence": 0.7},
+    "vision": {"face_detected": true, "emotion": "sad", "emotion_conf": 0.76, "gesture": null, "notes": "looking down silent"},
+    "audio": {"transcript": "", "emotion": "sad", "emotion_conf": 0.6, "language": "zh"},
+    "expect_action_group_any": ["bow"],
+    "expect_prompt_keywords": ["bow", "nod", "gentle", "slow"],
+    "allow_attack": false
+  },
+  {
+    "id": "E06",
+    "fused": {"emotion": "angry", "intent": "help", "urgency": "medium", "confidence": 0.72},
+    "vision": {"face_detected": true, "emotion": "angry", "emotion_conf": 0.74, "gesture": null, "notes": "tense"},
+    "audio": {"transcript": "怎么又出错了，真烦人", "emotion": "angry", "emotion_conf": 0.7, "language": "zh"},
+    "expect_action_group_any": ["stand", "bow"],
+    "expect_prompt_keywords": ["stand", "calm", "open", "slow"],
+    "allow_attack": false
+  },
+  {
+    "id": "E07",
+    "fused": {"emotion": "angry", "intent": "unknown", "urgency": "medium", "confidence": 0.68},
+    "vision": {"face_detected": true, "emotion": "angry", "emotion_conf": 0.7, "gesture": null, "notes": "stomping vibe"},
+    "audio": {"transcript": "我很生气", "emotion": "angry", "emotion_conf": 0.73, "language": "zh"},
+    "expect_action_group_any": ["stand"],
+    "expect_prompt_keywords": ["stand", "still", "calm"],
+    "allow_attack": false
+  },
+  {
+    "id": "E08",
+    "fused": {"emotion": "fearful", "intent": "help", "urgency": "high", "confidence": 0.77},
+    "vision": {"face_detected": true, "emotion": "fearful", "emotion_conf": 0.8, "gesture": null, "notes": "startled"},
+    "audio": {"transcript": "吓我一跳", "emotion": "fearful", "emotion_conf": 0.75, "language": "zh"},
+    "expect_action_group_any": ["stand", "bow"],
+    "expect_prompt_keywords": ["gentle", "reassure", "slow", "hands"],
+    "allow_attack": false
+  },
+  {
+    "id": "E09",
+    "fused": {"emotion": "fearful", "intent": "comfort_request", "urgency": "medium", "confidence": 0.73},
+    "vision": {"face_detected": true, "emotion": "fearful", "emotion_conf": 0.72, "gesture": null, "notes": "backing away"},
+    "audio": {"transcript": "别靠太近", "emotion": "fearful", "emotion_conf": 0.7, "language": "zh"},
+    "expect_action_group_any": ["bow", "stand"],
+    "expect_prompt_keywords": ["bow", "step back", "gentle"],
+    "allow_attack": false
+  },
+  {
+    "id": "E10",
+    "fused": {"emotion": "disgust", "intent": "stop", "urgency": "medium", "confidence": 0.7},
+    "vision": {"face_detected": true, "emotion": "disgust", "emotion_conf": 0.71, "gesture": "push_away", "notes": "recoil"},
+    "audio": {"transcript": "走开，别这样", "emotion": "disgust", "emotion_conf": 0.69, "language": "zh"},
+    "expect_action_group_any": ["stand", "back_fast"],
+    "expect_prompt_keywords": ["step back", "wave away", "refuse"],
+    "allow_attack": false
+  },
+  {
+    "id": "E11",
+    "fused": {"emotion": "surprised", "intent": "unknown", "urgency": "low", "confidence": 0.76},
+    "vision": {"face_detected": true, "emotion": "surprised", "emotion_conf": 0.8, "gesture": null, "notes": "eyes wide"},
+    "audio": {"transcript": "哇，真的假的", "emotion": "surprised", "emotion_conf": 0.74, "language": "zh"},
+    "expect_action_group_any": ["wave", "stand"],
+    "expect_prompt_keywords": ["surprise", "raise", "wave"],
+    "allow_attack": false
+  },
+  {
+    "id": "E12",
+    "fused": {"emotion": "neutral", "intent": "unknown", "urgency": "low", "confidence": 0.66},
+    "vision": {"face_detected": true, "emotion": "neutral", "emotion_conf": 0.7, "gesture": null, "notes": "calm"},
+    "audio": {"transcript": "今天天气怎么样", "emotion": "neutral", "emotion_conf": 0.65, "language": "zh"},
+    "expect_action_group_any": ["stand"],
+    "expect_prompt_keywords": ["stand", "nod"],
+    "allow_attack": false
+  },
+  {
+    "id": "E13",
+    "fused": {"emotion": "neutral", "intent": "play", "urgency": "low", "confidence": 0.83},
+    "vision": {"face_detected": true, "emotion": "neutral", "emotion_conf": 0.7, "gesture": null, "notes": ""},
+    "audio": {"transcript": "向前走两步", "emotion": "neutral", "emotion_conf": 0.8, "language": "zh"},
+    "expect_action_group_any": ["go_forward"],
+    "expect_prompt_keywords": ["walk", "forward"],
+    "allow_attack": false
+  },
+  {
+    "id": "E14",
+    "fused": {"emotion": "neutral", "intent": "play", "urgency": "low", "confidence": 0.82},
+    "vision": {"face_detected": true, "emotion": "neutral", "emotion_conf": 0.68, "gesture": null, "notes": ""},
+    "audio": {"transcript": "后退一点", "emotion": "neutral", "emotion_conf": 0.8, "language": "zh"},
+    "expect_action_group_any": ["back_fast"],
+    "expect_prompt_keywords": ["back", "backward"],
+    "allow_attack": false
+  },
+  {
+    "id": "E15",
+    "fused": {"emotion": "neutral", "intent": "play", "urgency": "low", "confidence": 0.8},
+    "vision": {"face_detected": true, "emotion": "neutral", "emotion_conf": 0.67, "gesture": null, "notes": ""},
+    "audio": {"transcript": "向左转一下", "emotion": "neutral", "emotion_conf": 0.78, "language": "zh"},
+    "expect_action_group_any": ["turn_left"],
+    "expect_prompt_keywords": ["turn", "left"],
+    "allow_attack": false
+  },
+  {
+    "id": "E16",
+    "fused": {"emotion": "happy", "intent": "greeting", "urgency": "low", "confidence": 0.85},
+    "vision": {"face_detected": true, "emotion": "happy", "emotion_conf": 0.84, "gesture": "wave", "notes": "leaving"},
+    "audio": {"transcript": "再见啦", "emotion": "happy", "emotion_conf": 0.83, "language": "zh"},
+    "expect_action_group_any": ["wave"],
+    "expect_prompt_keywords": ["wave", "goodbye", "bye"],
+    "allow_attack": false
+  },
+  {
+    "id": "E17",
+    "fused": {"emotion": "neutral", "intent": "play", "urgency": "low", "confidence": 0.81},
+    "vision": {"face_detected": true, "emotion": "neutral", "emotion_conf": 0.7, "gesture": null, "notes": ""},
+    "audio": {"transcript": "做个下蹲给我看", "emotion": "neutral", "emotion_conf": 0.8, "language": "zh"},
+    "expect_action_group_any": ["squat"],
+    "expect_prompt_keywords": ["squat"],
+    "allow_attack": false
+  },
+  {
+    "id": "E18",
+    "fused": {"emotion": "unknown", "intent": "unknown", "urgency": "low", "confidence": 0.28},
+    "vision": {"face_detected": false, "emotion": null, "emotion_conf": 0.2, "gesture": null, "notes": "blurry"},
+    "audio": {"transcript": "嗯...那个...啊", "emotion": null, "emotion_conf": 0.2, "language": "zh"},
+    "expect_action_group_any": ["stand"],
+    "expect_prompt_keywords": ["stand", "still"],
+    "expect_fallback": true,
+    "allow_attack": false
+  },
+  {
+    "id": "E19",
+    "fused": {"emotion": "happy", "intent": "greeting", "urgency": "low", "confidence": 0.74},
+    "vision": {"face_detected": true, "emotion": "happy", "emotion_conf": 0.82, "gesture": null, "notes": "smiling no speech"},
+    "audio": {"transcript": "", "emotion": null, "emotion_conf": 0.0, "language": "zh"},
+    "expect_action_group_any": ["wave"],
+    "expect_prompt_keywords": ["wave", "smile", "greet"],
+    "allow_attack": false
+  },
+  {
+    "id": "E20",
+    "fused": {"emotion": "sad", "intent": "comfort_request", "urgency": "low", "confidence": 0.71},
+    "vision": {"face_detected": false, "emotion": null, "emotion_conf": 0.0, "gesture": null, "notes": "camera occluded"},
+    "audio": {"transcript": "有点难过，能不能安静陪陪我", "emotion": "sad", "emotion_conf": 0.78, "language": "zh"},
+    "expect_action_group_any": ["bow", "stand"],
+    "expect_prompt_keywords": ["gentle", "bow", "quiet", "slow"],
+    "allow_attack": false
+  }
+]
