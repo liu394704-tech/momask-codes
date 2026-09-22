@@ -402,7 +402,10 @@ class PhraseSelector:
         loco_ids = {"stop_stand"}
         for ids in LOCO_PHRASE_IDS.values():
             loco_ids.update(ids)
-        social = [p for p in PHRASES if p.id not in loco_ids]
+        social = [
+            p for p in PHRASES
+            if p.id not in loco_ids and not p.id.startswith("loco_")
+        ]
         scored: List[Tuple[float, Phrase, List[str]]] = []
         for phrase in social:
             bans = self._hard_bans(phrase)

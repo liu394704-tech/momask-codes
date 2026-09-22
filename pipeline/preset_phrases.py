@@ -36,7 +36,7 @@ def _p(
     return Phrase(pid, clips, intent, emotion_fit, energy, tags, laterality)
 
 
-PHRASES: Tuple[Phrase, ...] = (
+CORE_PHRASES: Tuple[Phrase, ...] = (
     # --- greeting (20) ---
     _p("greet_wave_step", ("wave", "stepping"), "greeting",
        ("happy", "neutral"), "mid", ("greet",), "right"),
@@ -185,7 +185,7 @@ PHRASES: Tuple[Phrase, ...] = (
     # --- idle (8) ---
     _p("idle_step_hold", ("stepping", "stand_slow"), "unknown",
        ("neutral",), "low", ("idle",), "none"),
-    _p("idle_twist_hold", ("twist", "stand_slow"), "unknown",
+    _p("idle_twist_sidel_hold", ("twist", "left_move", "stand_slow"), "unknown",
        ("neutral",), "low", ("idle", "torso"), "none"),
     _p("idle_sidel_hold", ("left_move_10", "stand_slow"), "unknown",
        ("neutral",), "low", ("idle", "locomote"), "left"),
@@ -195,9 +195,9 @@ PHRASES: Tuple[Phrase, ...] = (
        ("neutral",), "low", ("idle", "locomote"), "left"),
     _p("idle_turnr_hold", ("turn_right_small_step", "stand_slow"), "unknown",
        ("neutral",), "low", ("idle", "locomote"), "right"),
-    _p("idle_squat_up", ("squat_down", "squat_up"), "unknown",
+    _p("idle_squat_step", ("squat", "stepping"), "unknown",
        ("neutral", "unhappy"), "low", ("idle", "torso"), "none"),
-    _p("idle_step_twist", ("stepping", "twist"), "unknown",
+    _p("idle_hold_twist_step", ("stand_slow", "twist", "stepping"), "unknown",
        ("neutral", "happy"), "low", ("idle", "torso"), "none"),
     # --- locomotion / stop (6) ---
     _p("loco_forward_small", ("go_forward_one_small_step",), "play",
@@ -214,12 +214,15 @@ PHRASES: Tuple[Phrase, ...] = (
        ("neutral", "happy", "unhappy", "surprised"), "low", ("recover",), "none"),
 )
 
+from .preset_phrases_expand import expand_phrases  # noqa: E402
+
+PHRASES: Tuple[Phrase, ...] = CORE_PHRASES + expand_phrases(CORE_PHRASES)
 
 LOCO_PHRASE_IDS = {
     "go_forward": ("loco_forward_small", "loco_forward_step"),
     "back_fast": ("loco_back",),
-    "turn_left": ("loco_turn_l",),
-    "turn_right": ("loco_turn_r",),
+    "turn_left": ("loco_turn_l", "loco_turn_l_a"),
+    "turn_right": ("loco_turn_r", "loco_turn_r_a"),
 }
 
 SOCIAL_INTENTS = (

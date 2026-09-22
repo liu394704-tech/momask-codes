@@ -35,8 +35,14 @@ ACTION_ALLOWLIST = (
     "turn_right",
     "turn_left_small_step",
     "turn_right_small_step",
+    "turn_left_small_step_a",
+    "turn_right_small_step_a",
+    "left_move",
+    "right_move",
     "left_move_10",
     "right_move_10",
+    "left_move_20",
+    "right_move_20",
 )
 
 # Full-step locomotion used only for explicit voice commands, never chained in phrases.
@@ -50,15 +56,21 @@ SMALL_LOCOMOTION_ACTIONS = (
     "back_one_step",
     "turn_left_small_step",
     "turn_right_small_step",
+    "turn_left_small_step_a",
+    "turn_right_small_step_a",
+    "left_move",
+    "right_move",
     "left_move_10",
     "right_move_10",
+    "left_move_20",
+    "right_move_20",
 )
 
 LOCOMOTION_HINTS = {
     "go_forward": ("go_forward_one_small_step", "go_forward_one_step"),
     "back_fast": ("back_one_step",),
-    "turn_left": ("turn_left_small_step",),
-    "turn_right": ("turn_right_small_step",),
+    "turn_left": ("turn_left_small_step", "turn_left_small_step_a"),
+    "turn_right": ("turn_right_small_step", "turn_right_small_step_a"),
 }
 
 BLOCKED_ACTIONS = (

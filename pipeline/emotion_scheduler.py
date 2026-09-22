@@ -61,8 +61,10 @@ SAFE_ACTION_GROUPS = (
     'turn_left', 'turn_right', 'left_move_fast', 'right_move_fast',
     'left_hand', 'right_hand', 'lift_left_hand', 'go_hand_up', 'go_hand_up1',
     'back_one_step', 'go_forward_one_small_step', 'go_forward_one_step',
-    'turn_left_small_step', 'turn_right_small_step', 'left_move_10',
-    'right_move_10',
+    'turn_left_small_step', 'turn_right_small_step',
+    'turn_left_small_step_a', 'turn_right_small_step_a',
+    'left_move', 'right_move', 'left_move_10', 'right_move_10',
+    'left_move_20', 'right_move_20',
 )
 
 BLOCKED_ACTION_GROUPS = (

@@ -147,7 +147,7 @@ JSON 写在 `pipeline_runs/*_emotion_llm.json`，字段 `momask` 为 true/false�
 WonderEcho 默认 `/dev/ttyUSB0`（可用 `WONDERECHO_PORT` 改）。未插麦时仍可走视觉。
 
 Track A 保底不再轮播单个 ActionGroup：视觉 + 听觉打分后选一条 2～3 片段短语
-（`pipeline/preset_phrases.py`），会话内禁止 8 轮内重复同一 `phrase_id`、3 轮内重复同一 clip。
+（手写核心 + 组合扩展，见 `pipeline/preset_phrases.py`），会话内禁止 8 轮内重复同一 `phrase_id`、3 轮内重复同一 clip。
 日志里看 `phrase id=` / `clips=` / `recovery=`。停 / 前进后退转仍走硬规则（短步短语）。
 
 

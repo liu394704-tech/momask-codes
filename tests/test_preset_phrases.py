@@ -51,7 +51,9 @@ class CatalogTests(unittest.TestCase):
             self.assertIn(clip.energy, ("low", "mid", "high"))
 
     def test_phrase_library_coverage(self):
-        self.assertGreaterEqual(len(PHRASES), 60)
+        self.assertGreaterEqual(len(PHRASES), 200)
+        clip_sets = [tuple(p.clips) for p in PHRASES]
+        self.assertEqual(len(clip_sets), len(set(clip_sets)))
         intents = {p.intent for p in PHRASES}
         for need in ("greeting", "comfort_request", "play", "help", "unknown", "stop"):
             self.assertIn(need, intents)
