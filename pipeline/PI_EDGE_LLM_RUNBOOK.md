@@ -91,3 +91,59 @@ python -m pipeline.run_mac_ab --once --mock-perception \
 | **树莓派正式** | **`edge_llm` = Qwen2.5-1.5B**，禁止依赖 OpenAI |
 
 规则引擎（`edge` / `mock`）仅作无权重时的兜底，**不是**正式分析模型。
+
+---
+
+## E. 第一段闭环（情绪 + 关键词 + ASR → 预设动作，不跑 MoMask）
+
+在 Mac 打包：
+
+```bash
+bash scripts/pi_pack_emotion_llm.sh
+scp dist/pipeline_emotion_llm_pi.tgz cat@<pi-host>:/tmp/
+```
+
+在树莓派：
+
+```bash
+cd ~/RBM-project/momask-codes
+tar -xzf /tmp/pipeline_emotion_llm_pi.tgz
+source venv_inference/bin/activate
+# 若尚未装 Qwen：bash scripts/pi_install_edge_llm.sh
+# 端侧 ASR：pip install openai-whisper
+sudo systemctl stop tonypi    # 必须，否则摄像头被主程序占用
+
+export DECIDE_BACKEND=edge_llm
+export EDGE_LLM_GGUF=$PWD/models/edge_llm/qwen2.5-1.5b-instruct-q4_k_m.gguf
+export EDGE_LLM_N_THREADS=4
+
+# S0 冒烟（假感知，舵机不动）
+python -m pipeline.run_pi_emotion_llm --once --mock-perception --simulate \
+  --decide-backend edge_llm --transcript '你好，我有点累，陪我一下'
+
+# S1–S4 真机循环：脸 / 小幻小幻+指令 / 唤醒后说话
+python -m pipeline.run_pi_emotion_llm --decide-backend edge_llm
+# 或：bash scripts/pi_run_emotion_llm.sh
+```
+
+本循环默认 **不** 调用 MoMask。打开开关后，预设动作仍然立刻执行，关节在旁边生成。
+
+开关：
+
+```bash
+# 关（默认）
+python -m pipeline.run_pi_emotion_llm --no-momask
+# 或 ENABLE_MOMASK=0
+
+# 开：ActionGroup + 并发生成 joints.npy
+python -m pipeline.run_pi_emotion_llm --momask
+# 或 ENABLE_MOMASK=1 bash scripts/pi_run_emotion_llm.sh
+
+# 开但不加载权重（只写 prompt 标记，联调开关用）
+python -m pipeline.run_pi_emotion_llm --momask --momask-dry-run --once --mock-perception --simulate
+```
+
+JSON 写在 `pipeline_runs/*_emotion_llm.json`，字段 `momask` 为 true/false。
+WonderEcho 默认 `/dev/ttyUSB0`（可用 `WONDERECHO_PORT` 改）。未插麦时仍可走视觉。
+
+

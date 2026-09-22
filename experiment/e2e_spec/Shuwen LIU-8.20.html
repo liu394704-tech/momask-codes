@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>组会汇报 · 感知→决策→动作生成（正式版）</title>
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --ink:#1f2937;
+    --ink-soft:#475569;
+    --ink-faint:#94a3b8;
+    --line:#e2e8f0;
+    --brand:#1d4ed8;
+    --brand-soft:#dbeafe;
+    --brand-2:#0e7490;
+    --accent:#0d9488;
+    --warn:#b45309;
+    --warn-soft:#fef3c7;
+    --good:#15803d;
+    --good-soft:#dcfce7;
+    --shadow:0 1px 3px rgba(15,23,42,.08),0 8px 24px rgba(15,23,42,.06);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    line-height:1.7;font-size:16px;
+  }
+  /* top nav */
+  .nav{
+    position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+    backdrop-filter:saturate(160%) blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{max-width:1080px;margin:0 auto;display:flex;gap:6px;padding:10px 20px;flex-wrap:wrap;align-items:center;}
+  .nav-brand{font-weight:700;color:var(--brand);margin-right:auto;font-size:14px;white-space:nowrap;}
+  .nav a{
+    text-decoration:none;color:var(--ink-soft);font-size:13.5px;padding:6px 12px;border-radius:999px;
+    transition:.15s;white-space:nowrap;
+  }
+  .nav a:hover{background:var(--brand-soft);color:var(--brand);}
+  /* hero */
+  .hero{
+    max-width:1080px;margin:36px auto 8px;padding:0 20px;
+  }
+  .hero-card{
+    background:linear-gradient(135deg,#1e3a8a,#1d4ed8 60%,#0e7490);
+    color:#fff;border-radius:20px;padding:46px 44px;box-shadow:var(--shadow);
+  }
+  .hero-card .kicker{font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:.85;}
+  .hero-card h1{margin:10px 0 14px;font-size:34px;line-height:1.25;font-weight:800;}
+  .hero-card p{margin:0;font-size:15.5px;opacity:.92;max-width:760px;}
+  .hero-meta{margin-top:22px;display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;opacity:.9;}
+  .hero-meta b{font-weight:600;}
+  /* layout */
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px;}
+  section.part{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:34px 38px;margin-top:26px;box-shadow:var(--shadow);
+  }
+  .part-head{display:flex;align-items:baseline;gap:16px;border-bottom:2px solid var(--brand-soft);padding-bottom:14px;margin-bottom:8px;}
+  .part-no{
+    flex:none;width:46px;height:46px;border-radius:12px;background:var(--brand);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;
+  }
+  .part-head h2{margin:0;font-size:23px;font-weight:800;color:var(--ink);}
+  .part-head .sub{font-size:13.5px;color:var(--ink-faint);margin-top:2px;}
+  h3.sub{font-size:17.5px;margin:30px 0 8px;color:var(--brand);font-weight:700;display:flex;align-items:center;gap:9px;}
+  h3.sub::before{content:"";width:7px;height:18px;background:var(--accent);border-radius:3px;display:inline-block;}
+  p{margin:10px 0;}
+  ul{margin:10px 0;padding-left:22px;}
+  li{margin:7px 0;}
+  .lead{color:var(--ink-soft);font-size:15.5px;}
+  .muted{color:var(--ink-faint);font-size:13.5px;}
+  /* callout */
+  .note{
+    border-left:4px solid var(--brand);background:var(--brand-soft);
+    padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:#1e3a5f;
+  }
+  .note.warn{border-color:var(--warn);background:var(--warn-soft);color:#7c4a03;}
+  .note.good{border-color:var(--good);background:var(--good-soft);color:#14532d;}
+  .note b{font-weight:700;}
+  /* metric grid */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:18px 0;}
+  .metric{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:16px 16px;text-align:center;}
+  .metric .num{font-size:26px;font-weight:800;color:var(--brand);line-height:1.1;}
+  .metric .num small{font-size:14px;font-weight:600;}
+  .metric .lab{font-size:13px;color:var(--ink-soft);margin-top:6px;}
+  /* table */
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px;}
+  th,td{border:1px solid var(--line);padding:10px 13px;text-align:left;vertical-align:top;}
+  th{background:#f1f5f9;color:var(--ink);font-weight:700;}
+  tbody tr:nth-child(even){background:#fafcff;}
+  .tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12.5px;font-weight:600;}
+  .tag.a{background:var(--brand-soft);color:var(--brand);}
+  .tag.b{background:#cffafe;color:var(--brand-2);}
+  .tag.p0{background:#fee2e2;color:#b91c1c;}
+  .tag.p1{background:#fef3c7;color:#b45309;}
+  .tag.p2{background:#e0e7ff;color:#4338ca;}
+  /* bar chart */
+  .chart{margin:18px 0;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:20px 22px;}
+  .chart h4{margin:0 0 16px;font-size:14.5px;color:var(--ink);font-weight:700;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin:11px 0;}
+  .bar-row .blab{width:128px;flex:none;font-size:13.5px;color:var(--ink-soft);text-align:right;}
+  .bar-track{flex:1;background:#eef2f7;border-radius:8px;height:26px;position:relative;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:9px;color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;}
+  .bar-fill.blue{background:linear-gradient(90deg,#3b82f6,#1d4ed8);}
+  .bar-fill.teal{background:linear-gradient(90deg,#2dd4bf,#0d9488);}
+  .bar-fill.amber{background:linear-gradient(90deg,#fbbf24,#d97706);}
+  .bar-fill.gray{background:linear-gradient(90deg,#cbd5e1,#94a3b8);}
+  .bar-fill.red{background:linear-gradient(90deg,#f87171,#dc2626);}
+  .chart .foot{font-size:12.5px;color:var(--ink-faint);margin-top:10px;}
+  /* timeline */
+  .tl{display:flex;gap:0;margin:18px 0;flex-wrap:wrap;}
+  .tl .seg{flex:1;min-width:90px;text-align:center;padding:14px 8px;color:#fff;font-size:13px;font-weight:600;position:relative;}
+  .tl .seg span{display:block;font-size:11px;font-weight:500;opacity:.9;margin-top:3px;}
+  .tl .arrow{display:flex;align-items:center;color:var(--ink-faint);font-size:20px;padding:0 2px;}
+  /* appendix */
+  .faq{border:1px solid var(--line);border-radius:12px;padding:6px 20px;margin:14px 0;background:#fff;}
+  .faq details{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq details:last-child{border-bottom:none;}
+  .faq summary{cursor:pointer;font-weight:700;color:var(--brand);font-size:15px;list-style:none;}
+  .faq summary::-webkit-details-marker{display:none;}
+  .faq summary::before{content:"▸ ";color:var(--ink-faint);}
+  .faq details[open] summary::before{content:"▾ ";}
+  .faq .a{margin-top:10px;color:var(--ink-soft);font-size:14.5px;}
+  .faq .a code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:13px;color:#0e7490;}
+  footer{text-align:center;color:var(--ink-faint);font-size:13px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:720px){.two-col{grid-template-columns:1fr;}.hero-card h1{font-size:26px;}.part-head h2{font-size:19px;}.bar-row .blab{width:96px;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-brand">RBM 组会 · 感知→决策→动作</span>
+    <a href="#part1">01 端侧 MoMask</a>
+    <a href="#part2">02 云侧联调</a>
+    <a href="#part3">03 A+B 双轨</a>
+    <a href="#part4">04 下一步</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-card">
+    <div class="kicker">HKUST RBM Project · 2026.08</div>
+    <h1>机器人如何看、听、动：<br>端侧动作生成与云侧联调进展</h1>
+    <div class="hero-meta">
+      <span><b>汇报范围</b>　基线冻结 → Mac 云侧 E2E → 树莓派 4GB 部署</span>
+      <span><b>测试机</b>　树莓派 5 · 4GB（联调/压测）</span>
+      <span><b>真机</b>　树莓派 5 · 16GB（机器人内）</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ PART 1 ============ -->
+  <section class="part" id="part1">
+    <div class="part-head">
+      <div class="part-no">01</div>
+      <div>
+        <h2>端侧 MoMask：已具备动作生成能力</h2>
+        <div class="sub">在树莓派 5 上，输入一句英文动作描述，输出全身关节坐标序列</div>
+      </div>
+    </div>
+
+    <p class="lead">在树莓派 5（4GB 内存、CPU 推理）上，给定一句英文动作描述，MoMask 输出全身关节坐标 <code style="background:#f1f5f9;padding:1px 6px;border-radius:5px;color:#0e7490;">(T, 22, 3)</code>。本阶段不渲染视频，重点验证三项指标：<b>时延稳定性</b>、<b>生成可靠性</b>与<b>情绪区分度</b>。</p>
+
+    <h3 class="sub">一句话结果：平均每条约 2.3 秒，数值 100% 合法</h3>
+    <p>测试配置：100 条情绪均衡 prompt，<code style="background:#f1f5f9;padding:1px 6px;border-radius:5px;color:#0e7490;">time_steps=18</code>，前 2 条作预热不计入平均。以下为正式端到端生成指标（不含模型加载）。</p>
+    <div class="metrics">
+      <div class="metric"><div class="num">2.30<small>s</small></div><div class="lab">平均每条</div></div>
+      <div class="metric"><div class="num">2.33<small>s</small></div><div class="lab">中位</div></div>
+      <div class="metric"><div class="num">2.64<small>s</small></div><div class="lab">P95（最慢 5%）</div></div>
+      <div class="metric"><div class="num">1.87–2.69<small>s</small></div><div class="lab">最短 / 最长</div></div>
+      <div class="metric"><div class="num">100<small>%</small></div><div class="lab">数值有效率</div></div>
+      <div class="metric"><div class="num">10.12<small>s</small></div><div class="lab">模型加载一次</div></div>
+    </div>
+    <div class="note">
+      模型首次加载约 10 秒，单独记账、不计入「条均生成时延」。开好机后，再请求「挥手」「鞠躬」等动作，约 2 秒出一套。因此<b>端侧正式对外汇报的生成指标应为热启动 2.30 秒/条</b>；10 秒加载属于一次性开销。
+    </div>
+
+    <h3 class="sub">时延稳不稳？集中在 2.3 秒附近，无长尾</h3>
+    <div class="chart">
+      <h4>98 条计入样本耗时分布（单位：秒，示意）</h4>
+      <div class="bar-row"><div class="blab">最短 1.87</div><div class="bar-track"><div class="bar-fill blue" style="width:74%">1.87s</div></div></div>
+      <div class="bar-row"><div class="blab">平均 2.30</div><div class="bar-track"><div class="bar-fill blue" style="width:92%">2.30s</div></div></div>
+      <div class="bar-row"><div class="blab">中位 2.33</div><div class="bar-track"><div class="bar-fill blue" style="width:93%">2.33s</div></div></div>
+      <div class="bar-row"><div class="blab">P95 2.64</div><div class="bar-track"><div class="bar-fill amber" style="width:100%">2.64s</div></div></div>
+      <div class="bar-row"><div class="blab">最长 2.69</div><div class="bar-track"><div class="bar-fill amber" style="width:100%">2.69s</div></div></div>
+      <div class="foot">柱体集中在 2.3 秒附近，无拖到 4–5 秒的长尾；不同情绪平均耗时均约 2 秒出头，差异可忽略——时延主要由硬件决定，与「这句话是开心还是难过」基本无关。</div>
+    </div>
+
+    <h3 class="sub">生成的动作有没有情绪差别？有，且符合常识</h3>
+    <p>无真人标注，以关节运动的<b>速度幅值</b>（动作开合程度）与<b>抖动幅值</b>（变化剧烈程度）作为代理指标：速度大表示动作更开，抖动大表示变化更急。下面用 Mean Speed（速度均值）与 Mean Jerk（急动度均值）两个量化指标做可视化对比。</p>
+    <div class="chart">
+      <h4>各情绪 Mean Speed（关节平均速度幅值，相对示意）</h4>
+      <div class="bar-row"><div class="blab">happy</div><div class="bar-track"><div class="bar-fill teal" style="width:100%">最高</div></div></div>
+      <div class="bar-row"><div class="blab">surprised</div><div class="bar-track"><div class="bar-fill teal" style="width:76%">较高</div></div></div>
+      <div class="bar-row"><div class="blab">neutral</div><div class="bar-track"><div class="bar-fill gray" style="width:52%">居中</div></div></div>
+      <div class="bar-row"><div class="blab">unhappy</div><div class="bar-track"><div class="bar-fill gray" style="width:34%">最低</div></div></div>
+      <div class="foot">Mean Speed 由关节轨迹对时间求一阶导得到，反映单位时间内的位移大小——值越大，肢体摆得越开。happy 最高、unhappy 最低，与直觉一致，说明文本确实在调制动作幅度，而非每句生成同一套站桩。</div>
+    </div>
+    <div class="chart">
+      <h4>各情绪 Mean Jerk（关节平均急动度，相对示意）</h4>
+      <div class="bar-row"><div class="blab">happy</div><div class="bar-track"><div class="bar-fill amber" style="width:100%">最急</div></div></div>
+      <div class="bar-row"><div class="blab">surprised</div><div class="bar-track"><div class="bar-fill amber" style="width:80%">较急</div></div></div>
+      <div class="bar-row"><div class="blab">neutral</div><div class="bar-track"><div class="bar-fill gray" style="width:50%">居中</div></div></div>
+      <div class="bar-row"><div class="blab">unhappy</div><div class="bar-track"><div class="bar-fill gray" style="width:30%">最缓</div></div></div>
+      <div class="foot">Mean Jerk 为速度对时间的二阶变化率，反映动作变化的剧烈/急促程度。happy 变化最急、unhappy 最收敛。注意：抖动高不等于观感差，happy 本就该更「蹦」——这是情绪表达到位，而非动作失真。</div>
+    </div>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="part" id="part2">
+    <div class="part-head">
+      <div class="part-no">02</div>
+      <div>
+        <h2>云侧联调：在 Mac 上打通感知→决策→动作链路</h2>
+        <div class="sub">视觉/听觉在本地，决策用云端小模型；整套尚未完整迁回树莓派</div>
+      </div>
+    </div>
+
+    <p class="lead">本阶段目标是在 Mac（M4）上把「摄像头 + 麦克风 → 云 LLM → MoMask prompt/关节」整条链路跑通并记录计时。视觉与听觉在本地完成，决策（Decide）由云端小模型完成。整条链路尚未完整迁移至树莓派——4GB 运行内存无法同时承载模型编译与推理。</p>
+
+    <h3 class="sub">看、听、想，各自负责什么</h3>
+    <table>
+      <thead><tr><th style="width:64px">模块</th><th style="width:130px">运行位置</th><th>职责</th></tr></thead>
+      <tbody>
+        <tr><td><b>看</b></td><td>电脑本地</td><td>摄像头采集人脸，MediaPipe FaceMesh 提取 468 个关键点，计算嘴/眼是否上扬，判定 4 类情绪（neutral/happy/unhappy/surprised）。<b>帧不上云</b>。</td></tr>
+        <tr><td><b>听</b></td><td>先本地，再上云</td><td>麦克风录 3–4 秒，送云端 ASR 转文字（<code style="background:#f1f5f9;padding:1px 6px;border-radius:5px;color:#0e7490;">gpt-4o-transcribe</code>）。不做语音情绪识别，文字仅作为「用户意图」。</td></tr>
+        <tr><td><b>想</b></td><td>云端小模型</td><td>模型 <code style="background:#f1f5f9;padding:1px 6px;border-radius:5px;color:#0e7490;">gpt-4o-mini</code> 仅消费结构化结果，写出一句英文 action_prompt，再交给 MoMask 生成关节。</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">为什么一轮要十几秒？最大头不是 LLM</h3>
+    <p>Mac 实测单轮墙钟构成：视觉约 10 秒，云 ASR 约 3 秒，云端 Decide 约 2.5 秒。<b>真正的云开销只有后两笔（合计约 5–7 秒）</b>。</p>
+    <div class="chart">
+      <h4>实机一轮墙钟构成（感知并行，其余串行）</h4>
+      <div class="bar-row"><div class="blab">视觉（本机）</div><div class="bar-track"><div class="bar-fill red" style="width:100%">≈10s · 最大头</div></div></div>
+      <div class="bar-row"><div class="blab">录音 3.5s</div><div class="bar-track"><div class="bar-fill gray" style="width:35%">与视觉并行，被覆盖，不增墙钟</div></div></div>
+      <div class="bar-row"><div class="blab">云 ASR</div><div class="bar-track"><div class="bar-fill amber" style="width:48%">≈2.2–4.8s</div></div></div>
+      <div class="bar-row"><div class="blab">云 Decide</div><div class="bar-track"><div class="bar-fill amber" style="width:30%">≈2.2–2.6s</div></div></div>
+      <div class="bar-row"><div class="blab">MoMask（实机）</div><div class="bar-track"><div class="bar-fill gray" style="width:18%">降级未跑</div></div></div>
+      <div class="foot">视觉 10 秒主因：每轮重新打开摄像头、并对着镜头「放轻松」标定约 8 秒，真正用于判情绪的仅约 12 帧。10 秒是「反复开机/标定」而非识别慢。</div>
+    </div>
+    <div class="note warn">
+      <b>MoMask 的 8.9 秒是「冤枉账」：</b>树莓派上模型已常驻内存、一条仅 2.3 秒；而 Mac 本轮每次重新 subprocess 启动 MoMask，把约 10 秒加载也算进了计时，于是变成 8.9 秒。<b>模型没有变慢，是进程是否常驻与计时口径的差异。</b>
+    </div>
+
+    <h3 class="sub">为什么还没全部上树莓派？4GB 内存太挤</h3>
+    <p>测试机仅 4GB 运行内存，「装东西」与「跑东西」争抢同一块内存。</p>
+    <div class="two-col">
+      <div>
+        <p style="margin-bottom:4px"><b>已上树莓派：</b></p>
+        <ul style="margin-top:4px">
+          <li>MoMask 能跑（热启动 2.3s/条）；</li>
+          <li>A∥B 规则决策 dry-run 已通；</li>
+          <li>代码已 rsync 到板上。</li>
+        </ul>
+      </div>
+      <div>
+        <p style="margin-bottom:4px"><b>仍在电脑上：</b></p>
+        <ul style="margin-top:4px">
+          <li>摄像头情绪识别；</li>
+          <li>云端听写（ASR）；</li>
+          <li>云端写动作句（Decide）。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">
+      <b>卡点：</b>端侧要用的小模型 Qwen 在 Python 3.13 + aarch64 上无现成安装包，只能本机编译；编译器多核并行时内存被吃光，机器直接死机。结论：4GB 够「跑一次生成」，不够「一边装大工具、一边跑生成」；16GB 真机才不会这么脆弱。
+    </div>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="part" id="part3">
+    <div class="part-head">
+      <div class="part-no">03</div>
+      <div>
+        <h2>A∥B 双轨架构：先动起来，再补细动作</h2>
+        <div class="sub">用户等 15 秒会以为机器人死机，故正式落地走双轨而非「全部算完再动」</div>
+      </div>
+    </div>
+
+    <p class="lead">单轨死等 15 秒以上，用户会判定机器人卡死。因此正式落地不走「全部算完再动」，而采用双轨：<b>A 保底、B 正式、默认 A∥B 并行</b>。用户感知的是「机器人何时开始动」，而非「后台是否全部算完」。</p>
+
+    <h3 class="sub">两条轨道的分工</h3>
+    <table>
+      <thead><tr><th style="width:120px">轨道</th><th>角色</th><th>输入</th><th>输出 / 时延</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag a">A 预置</span></td>
+          <td>保底 / 快路径。现成动作，几乎立即播放；不求好看，求「机器人还活着」。</td>
+          <td>粗情绪（如开心→招手，难过→鞠躬）</td>
+          <td>ActionGroup 名；启动 &lt; 0.5s</td>
+        </tr>
+        <tr>
+          <td><span class="tag b">B 正式</span></td>
+          <td>表达主路径。综合表情与说话内容写细英文句，生成连续关节。</td>
+          <td>action_prompt</td>
+          <td>(T,22,3) joints；热启动 ~2.3s</td>
+        </tr>
+        <tr>
+          <td>Arbiter</td>
+          <td>薄仲裁，不内嵌模型，只决定本轮走 A / B / 并行。</td>
+          <td>mode + conf + 错误码</td>
+          <td>可忽略</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note good">
+      <b>降级规则（已冻结）：</b>confidence &lt; 0.45，或 fallback，或空 prompt，或 Decide / MoMask 失败 → 本轮只走 A；<b>前面已执行的预置动作不撤回</b>。默认模式 <code style="background:#f1f5f9;padding:1px 6px;border-radius:5px;color:#0e7490;">A_parallel_B</code>：先播预置，同时/随后跑 MoMask。B 可比 A 晚到——A 先把场撑住，B 到了再替换为更像样的动作。
+    </div>
+
+    <h3 class="sub">这样为什么能少等？把「首次动作」提前</h3>
+    <div class="chart">
+      <h4>用户体感：单轨 vs 双轨</h4>
+      <div style="margin-bottom:14px">
+        <div class="muted" style="margin-bottom:6px">单轨死等（串行累计）</div>
+        <div class="tl">
+          <div class="seg" style="background:#dc2626">看脸 10s<span>标定+采样</span></div>
+          <div class="arrow">→</div>
+          <div class="seg" style="background:#d97706">云 5s<span>ASR+Decide</span></div>
+          <div class="arrow">→</div>
+          <div class="seg" style="background:#2563eb">生成 2s<span>才第一次动</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="muted" style="margin-bottom:6px">双轨（A 先动，B 后台补）</div>
+        <div class="tl">
+          <div class="seg" style="background:#2563eb">A 即时<span>表情一稳即播</span></div>
+          <div class="arrow">+</div>
+          <div class="seg" style="background:#0d9488">B 2s 后<span>后台生成细动作</span></div>
+          <div class="seg" style="background:#94a3b8;opacity:.5">眼前马上有动作</div>
+        </div>
+      </div>
+      <div class="foot">工程上还需两刀：摄像头不要每轮重开、MoMask 不要每次重新加载。改完后体感为「眼前马上有动作，细动作约 2 秒后补上」。</div>
+    </div>
+  </section>
+
+  <!-- ============ PART 4 ============ -->
+  <section class="part" id="part4">
+    <div class="part-head">
+      <div class="part-no">04</div>
+      <div>
+        <h2>下一步：按优先级落地</h2>
+        <div class="sub">先统一延迟口径，再补端侧 LLM，最后才做记忆</div>
+      </div>
+    </div>
+
+    <p class="lead">整体顺序：先把感知做得更快更准，再把整套搬回树莓派，记忆模块放到最后。下列优先级来自当前联调结论。</p>
+
+    <table>
+      <thead><tr><th style="width:70px">优先级</th><th>事项</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><b>常驻 MoMask worker</b></td>
+          <td>把 subprocess 冷启动改为「加载一次、多条生成」，让 Mac / Pi 生成时延都回到 ~2s 口径。</td>
+        </tr>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><b>摄像头常开、标定一次</b></td>
+          <td>E2E 不再每轮 8 秒标定；视觉从 10s 降到百毫秒级采样。</td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><b>装完 Qwen2.5-1.5B 并冒烟</b></td>
+          <td>单线程编译 llama-cpp → ModelScope 拉 GGUF → edge_llm Decide 跑通。</td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><b>收紧 prompt 句式</b></td>
+          <td>强制 <code style="background:#f1f5f9;padding:1px 6px;border-radius:5px;color:#0e7490;">a person …</code> HumanML3D 句式；弱脸但有 ASR 意图时仍出 prompt。</td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><b>端侧 ASR</b></td>
+          <td>云 Whisper 仅 Mac 联调；Pi 上换 whisper.cpp tiny/base 或先手写 transcript。</td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><b>16GB 真机 + 队友关节包</b></td>
+          <td>同机 A∥B；joints 包合同与舵机映射联调。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <b>记忆模块（放最后）：</b>待 16GB 真机到位、完整链路稳定后再做。用途是记住刚才聊过什么、情绪是否变化，用以修正下一轮动作——而不是再堆一个大模型。当前接入会干扰主链路验收，故延后。
+    </div>
+  </section>
+
+  <footer>
+    HKUST RBM Project · 组会汇报（正式版）· 2026.08　|　内容依「大白话版」四部分顺序整理，技术细节参考「感知决策动作生成」正式文档
+  </footer>
+
+</div>
+</body>
+</html>
