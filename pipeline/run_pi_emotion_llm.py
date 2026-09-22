@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pi live loop: face + WonderEcho + local ASR -> edge LLM -> ActionGroup.
+"""Pi live loop: face + WonderEcho + local ASR -> edge LLM -> phrase ActionGroups.
 
 MoMask is optional. Default OFF. Turn on with --momask or ENABLE_MOMASK=1.
 When on, Track A still runs first (robot moves immediately); Track B writes
@@ -47,6 +47,7 @@ from pipeline.percept_pi import (  # noqa: E402
 from pipeline.arbiter import Arbiter, ArbiterConfig  # noqa: E402
 from pipeline.motion_quality import quality_from_joints_path  # noqa: E402
 from pipeline.schemas import Decision, Mode, Perception, TrackBResult  # noqa: E402
+from pipeline.preset_select import PhraseSelector  # noqa: E402
 from pipeline.track_a import run_track_a  # noqa: E402
 from pipeline.track_b import run_track_b  # noqa: E402
 
@@ -126,8 +127,10 @@ def _ensure_functions_path():
 
 def _import_scheduler():
     _ensure_functions_path()
-    from EmotionActionScheduler import EmotionActionScheduler  # type: ignore
-
+    try:
+        from EmotionActionScheduler import EmotionActionScheduler  # type: ignore
+    except Exception:
+        from pipeline.emotion_scheduler import EmotionActionScheduler  # type: ignore
     return EmotionActionScheduler()
 
 
@@ -199,6 +202,10 @@ def _log_round(
             "intensity": track_a.intensity,
             "simulated": track_a.simulated,
             "detail": track_a.detail,
+            "phrase_id": getattr(track_a, "phrase_id", None),
+            "clips": list(getattr(track_a, "clips", None) or []),
+            "recovery": getattr(track_a, "recovery", None),
+            "bans": list(getattr(track_a, "bans", None) or []),
         },
         "momask": bool(momask_on),
         "track_b": None,
@@ -238,6 +245,12 @@ def _print_round(perception: Perception, decision: Decision, track_a, path: Path
     print("track_a: action=%s executed=%s simulated=%s (%s)" % (
         track_a.action, track_a.executed, track_a.simulated, track_a.detail,
     ))
+    print("phrase: id=%s clips=%s recovery=%s bans=%s" % (
+        getattr(track_a, "phrase_id", None),
+        list(getattr(track_a, "clips", None) or []),
+        getattr(track_a, "recovery", None),
+        list(getattr(track_a, "bans", None) or []),
+    ))
     if momask_on and track_b is not None:
         print("track_b: ran=%s ok=%s dry_run=%s gen=%.2fs joints=%s err=%s" % (
             track_b.ran, track_b.ok, track_b.dry_run,
@@ -249,7 +262,7 @@ def _print_round(perception: Perception, decision: Decision, track_a, path: Path
     print("log:", path)
 
 
-def run_one_round(args, session: str, transcript: str, keyword: Optional[str], echo_error: Optional[str], scheduler):
+def run_one_round(args, session: str, transcript: str, keyword: Optional[str], echo_error: Optional[str], scheduler, selector=None):
     t0 = time.perf_counter()
     perception = _build_perception(args, session, transcript, keyword, echo_error)
     t_perc = time.perf_counter() - t0
@@ -287,6 +300,8 @@ def run_one_round(args, session: str, transcript: str, keyword: Optional[str], e
         execute_robot=do_robot,
         keyword=keyword,
         scheduler=scheduler,
+        perception=perception,
+        selector=selector,
     )
 
     track_b = None
@@ -353,6 +368,7 @@ def main() -> int:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     scheduler = _import_scheduler()
+    selector = PhraseSelector()
 
     echo = None
     echo_error = None
@@ -379,6 +395,7 @@ def main() -> int:
             keyword=args.keyword or None,
             echo_error=echo_error,
             scheduler=scheduler,
+            selector=selector,
         )
         close_pi_vision_session()
         if echo:
@@ -453,6 +470,7 @@ def main() -> int:
                 keyword=keyword,
                 echo_error=echo_error,
                 scheduler=scheduler,
+                selector=selector,
             )
             n_done += 1
             if args.simulate and track_a.executed:

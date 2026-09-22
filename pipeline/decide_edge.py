@@ -23,7 +23,9 @@ Given multimodal perception JSON, output ONLY one JSON object with fields:
   emotion: one of neutral,happy,sad,angry,fearful,disgust,surprised,unhappy
   intent: one of greeting,comfort_request,play,stop,help,unknown
   confidence: number 0..1
-  action_group: array from [stand,wave,bow,jugong,squat,chest,twist,stepping,back_fast,go_forward,turn_left,turn_right]
+  action_group: array of 1-3 hint names from the social allow-list
+    (wave,bow,jugong,squat,chest,twist,stepping,hand poses, small steps).
+    Track A phrase selector may compose a longer sequence from these hints.
   action_prompt: ONE English HumanML3D-style motion sentence starting with "a person"
   motion_length_hint: int, 0 means auto
   fallback: boolean
@@ -238,6 +240,7 @@ def edge_rule_decide(perception: Perception) -> Decision:
         fallback=fallback,
         reason=reason,
         ok=True,
+        extras={"phrase_hint": intent},
     )
 
 
@@ -336,6 +339,7 @@ def edge_llm_decide(perception: Perception, timeout_s: float = 120.0) -> Decisio
         fallback=bool(data.get("fallback", False)),
         reason=str(data.get("reason") or ("edge_llm %.2fs" % (time.time() - t0))),
         ok=True,
+        extras={"phrase_hint": intent},
     )
 
 

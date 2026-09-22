@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Sequence
 
-# Matches the plan allow-list (plus stand_slow as recovery alias).
+# Social allow-list: original groups plus unused safe clips for phrase composition.
 ACTION_ALLOWLIST = (
     "stand",
     "stand_slow",
@@ -16,17 +16,50 @@ ACTION_ALLOWLIST = (
     "bow",
     "jugong",
     "squat",
+    "squat_down",
+    "squat_up",
     "chest",
     "twist",
     "stepping",
+    "left_hand",
+    "right_hand",
+    "lift_left_hand",
+    "go_hand_up",
+    "go_hand_up1",
     "back_fast",
+    "back_one_step",
     "go_forward",
+    "go_forward_one_small_step",
+    "go_forward_one_step",
     "turn_left",
     "turn_right",
+    "turn_left_small_step",
+    "turn_right_small_step",
+    "left_move_10",
+    "right_move_10",
 )
 
+# Full-step locomotion used only for explicit voice commands, never chained in phrases.
 LOCOMOTION_ACTIONS = ("go_forward", "back_fast", "turn_left", "turn_right")
 LOCOMOTION_TIMES = 2
+
+# Phrase playback uses these short clips once (no times=2).
+SMALL_LOCOMOTION_ACTIONS = (
+    "go_forward_one_small_step",
+    "go_forward_one_step",
+    "back_one_step",
+    "turn_left_small_step",
+    "turn_right_small_step",
+    "left_move_10",
+    "right_move_10",
+)
+
+LOCOMOTION_HINTS = {
+    "go_forward": ("go_forward_one_small_step", "go_forward_one_step"),
+    "back_fast": ("back_one_step",),
+    "turn_left": ("turn_left_small_step",),
+    "turn_right": ("turn_right_small_step",),
+}
 
 BLOCKED_ACTIONS = (
     "left_shot_fast",
@@ -71,6 +104,13 @@ KEYWORD_TO_PHRASE = {
 STOP_INTENTS = ("stop",)
 STOP_KEYWORDS = ("sleep", "stop")
 STOP_PHRASES = ("停", "不要", "停止", "stop", "enough", "别动")
+
+LOCO_KEYWORDS = {
+    "forward": "go_forward",
+    "back": "back_fast",
+    "turn_left": "turn_left",
+    "turn_right": "turn_right",
+}
 
 
 def sanitize_action_group(names: Optional[Sequence[str]]) -> List[str]:
@@ -124,3 +164,20 @@ def locomotion_times(action: Optional[str]) -> int:
     if action in LOCOMOTION_ACTIONS:
         return LOCOMOTION_TIMES
     return 1
+
+
+def locomotion_hint_from_group(names: Optional[Sequence[str]]) -> Optional[str]:
+    """Return a full-step locomotion name if the decision hinted at one."""
+    for name in sanitize_action_group(names):
+        if name in LOCOMOTION_HINTS or name in LOCOMOTION_ACTIONS:
+            return name if name in LOCOMOTION_HINTS else name
+    return None
+
+
+def normalize_emotion(emotion: Optional[str]) -> str:
+    emo = (emotion or "neutral").strip().lower()
+    if emo in ("sad", "angry"):
+        return "unhappy"
+    if emo not in ("neutral", "happy", "unhappy", "surprised"):
+        return "neutral"
+    return emo

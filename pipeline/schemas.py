@@ -47,6 +47,7 @@ class Decision:
     reason: str = ""
     ok: bool = True
     error: Optional[str] = None
+    extras: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -59,6 +60,10 @@ class TrackAResult:
     intensity: Optional[str] = None
     simulated: bool = True
     detail: str = ""
+    phrase_id: Optional[str] = None
+    clips: List[str] = field(default_factory=list)
+    recovery: Optional[str] = None
+    bans: List[str] = field(default_factory=list)
 
 
 @dataclass

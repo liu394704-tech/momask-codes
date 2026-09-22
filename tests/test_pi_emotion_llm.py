@@ -17,6 +17,7 @@ from pipeline.actions import (
 )
 from pipeline.decide_edge import edge_rule_decide
 from pipeline.schemas import Decision, Perception
+from pipeline.preset_select import PhraseSelector
 from pipeline.track_a import resolve_action, run_track_a
 
 
@@ -94,9 +95,10 @@ class TrackAResolveTests(unittest.TestCase):
             confidence=0.8, action_prompt="a person waves",
             action_group=["go_forward"],
         )
-        action, source = resolve_action(d)
-        self.assertEqual(action, "go_forward")
-        self.assertEqual(source, "decision_action_group")
+        selector = PhraseSelector()
+        action, source = resolve_action(d, selector=selector)
+        self.assertIn(action, ("go_forward_one_small_step", "go_forward_one_step"))
+        self.assertEqual(source, "locomotion_phrase")
 
     def test_blocked_group_ignored(self):
         d = Decision(
@@ -104,9 +106,11 @@ class TrackAResolveTests(unittest.TestCase):
             confidence=0.8, action_prompt="a person kicks",
             action_group=["left_kick"],
         )
-        action, source = resolve_action(d)
+        selector = PhraseSelector()
+        action, source = resolve_action(d, selector=selector)
         self.assertNotEqual(action, "left_kick")
-        self.assertIn(source, ("no_preset_action", "emotion_pool"))
+        self.assertNotIn("left_kick", (action or "").split("+"))
+        self.assertIn(source, ("phrase_select", "phrase_fallback", "phrase_stand"))
 
     def test_stop_stand(self):
         d = Decision(
@@ -114,7 +118,8 @@ class TrackAResolveTests(unittest.TestCase):
             confidence=0.9, action_prompt="a person stands",
             action_group=["chest"],
         )
-        action, source = resolve_action(d)
+        selector = PhraseSelector()
+        action, source = resolve_action(d, selector=selector)
         self.assertEqual(action, "stand")
         self.assertEqual(source, "stop_signal")
 
@@ -124,11 +129,17 @@ class TrackAResolveTests(unittest.TestCase):
             confidence=0.8, action_prompt="a person waves",
             action_group=["wave"],
         )
-        result = run_track_a(d, simulate=True, execute_robot=False)
+        perc = _perc(emotion="happy", transcript="你好呀", face_actions=["smile"])
+        result = run_track_a(
+            d, simulate=True, execute_robot=False,
+            perception=perc, selector=PhraseSelector(),
+        )
         self.assertTrue(result.executed)
         self.assertTrue(result.simulated)
-        self.assertEqual(result.action, "wave")
-        self.assertIn("decision_action_group", result.detail)
+        self.assertTrue(result.clips)
+        for clip in result.clips:
+            self.assertIn(clip, ACTION_ALLOWLIST)
+        self.assertIn("phrase_select", result.detail)
 
 
 class MomaskSwitchTests(unittest.TestCase):
