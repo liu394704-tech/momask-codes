@@ -156,15 +156,27 @@ Track A 保底不再轮播单个 ActionGroup：视觉 + 听觉打分后选一条
 
 **只连 HW 热点时：机器人上不了网，不能在热点里从魔搭/HF 拉权重。**
 脸模已经在 `/home/pi/TonyPi/Functions`，778 条短语也不要额外权重，连着 `HW*` 就能跑动作闭环。
-Qwen GGUF / emotion2vec 只能「别处下好 → 经热点拷进去」：
+Qwen GGUF / emotion2vec 的正确顺序是：**电脑先上网下载 → 再连 HW* / VNC 拷进机器人。**
 
 ```bash
-# 电脑已连 HW*（机器人 192.168.149.1），文件事先在 U 盘或电脑上
-scp qwen2.5-1.5b-instruct-q4_k_m.gguf cat@192.168.149.1:~/RBM-project/momask-codes/models/edge_llm/
-# 树莓派 VNC：
-bash scripts/pi_stage_weights_offline.sh
-# 或指定 U 盘挂载点
-bash scripts/pi_stage_weights_offline.sh /media/pi/USB
+# 1) 电脑连家里/学校网（不要连 HW*）
+cd /Users/emmaliu/Desktop/HKUST/RBM-project/Model/momask-codes
+bash scripts/mac_download_edge_weights.sh --gguf-only
+# 得到 dist/edge_weights/edge_llm/qwen2.5-1.5b-instruct-q4_k_m.gguf（约 1GB）
+
+# 2) 电脑改连 HW*，打开 VNC（192.168.149.1）
+#    文件管理器：把该 gguf 拷到
+#    ~/RBM-project/momask-codes/models/edge_llm/
+#    或先拷到 U 盘，插机器人，VNC 打开 /media/pi/* 或 /media/cat/*
+
+# 3) 树莓派 VNC 终端
+cd ~/RBM-project/momask-codes
+bash scripts/pi_stage_weights_offline.sh ~/Desktop
+# 或：bash scripts/pi_stage_weights_offline.sh /media/pi/USB
+
+# 同一热点也可用 scp（不必 VNC 拖文件）
+scp dist/edge_weights/edge_llm/qwen2.5-1.5b-instruct-q4_k_m.gguf \
+  cat@192.168.149.1:~/RBM-project/momask-codes/models/edge_llm/
 ```
 
 有局域网时再装运行时和在线下载：

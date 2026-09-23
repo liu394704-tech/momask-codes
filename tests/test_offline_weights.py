@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "pi_stage_weights_offline.sh"
+MAC_SCRIPT = ROOT / "scripts" / "mac_download_edge_weights.sh"
 
 
 class OfflineStageTests(unittest.TestCase):
@@ -39,6 +40,14 @@ class OfflineStageTests(unittest.TestCase):
             out = dest_llm / "qwen2.5-1.5b-instruct-q4_k_m.gguf"
             self.assertTrue(out.is_file())
             self.assertEqual(out.read_bytes(), b"fake-gguf")
+
+    def test_mac_download_script_is_local_first(self):
+        self.assertTrue(MAC_SCRIPT.is_file())
+        text = MAC_SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("qwen2.5-1.5b-instruct-q4_k_m.gguf", text)
+        self.assertIn("VNC", text)
+        self.assertIn("192.168.149.1", text)
+        self.assertIn("hf-mirror.com", text)
 
     def test_missing_source_is_ok(self):
         with tempfile.TemporaryDirectory() as tmp:
