@@ -16,6 +16,8 @@ PACK=(
   scripts/pi_run_emotion_llm.sh
   scripts/pi_install_audio_ser.sh
   scripts/pi_stage_weights_offline.sh
+  scripts/pi_vnc_setup_and_run.sh
+  scripts/mac_download_edge_weights.sh
 )
 for rel in \
   源码/TonyPi/Functions/FaceExpression.py \
@@ -28,7 +30,11 @@ do
     echo "skip missing $rel (use stock /home/pi/TonyPi/Functions on the robot)"
   fi
 done
-tar --disable-copyfile --no-xattrs -czf "$TGZ" "${PACK[@]}"
+TAR_FLAGS=(-czf "$TGZ")
+if tar --help 2>/dev/null | grep -q disable-copyfile; then
+  TAR_FLAGS=(--disable-copyfile --no-xattrs -czf "$TGZ")
+fi
+tar "${TAR_FLAGS[@]}" --exclude='__pycache__' --exclude='*.pyc' "${PACK[@]}"
 ls -lh "$TGZ"
 echo "scp $TGZ cat@<pi-host>:/tmp/"
 echo "On Pi: cd ~/RBM-project/momask-codes && tar -xzf /tmp/pipeline_emotion_llm_pi.tgz"
