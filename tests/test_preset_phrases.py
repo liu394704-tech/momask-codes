@@ -41,6 +41,14 @@ def _dec(**kwargs) -> Decision:
     )
 
 
+class VisionPathTests(unittest.TestCase):
+    def test_pi_functions_path_includes_stock_tonypi(self):
+        from pipeline.percept_pi import _HIWONDER_CANDIDATES
+
+        self.assertIn("/home/pi/TonyPi/Functions", _HIWONDER_CANDIDATES)
+        self.assertIn("/home/cat/TonyPi/Functions", _HIWONDER_CANDIDATES)
+
+
 class CatalogTests(unittest.TestCase):
     def test_catalog_size_and_safety(self):
         self.assertGreaterEqual(len(CLIPS), 20)
@@ -101,9 +109,19 @@ class DiversityTests(unittest.TestCase):
         for phrase_id, hits in phrase_idx.items():
             for prev, nxt in zip(hits, hits[1:]):
                 self.assertGreaterEqual(
-                    nxt - prev, 8,
+                    nxt - prev, 10,
                     "phrase %s reused too soon: %s" % (phrase_id, hits),
                 )
+        for start in range(0, 11):
+            window = [c.phrase_id for c in choices[start:start + 10]]
+            self.assertEqual(
+                len(window), len(set(window)),
+                "duplicate inside 10-window %s: %s" % (start, window),
+            )
+        actions = [c.action for c in choices]
+        for start in range(0, 11):
+            window = actions[start:start + 10]
+            self.assertEqual(len(window), len(set(window)), window)
 
         clip_idx = defaultdict(list)
         for index, choice in enumerate(choices):

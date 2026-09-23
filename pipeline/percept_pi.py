@@ -14,6 +14,8 @@ from .schemas import Perception
 _SESSION: Optional["PiVisionSession"] = None
 
 _HIWONDER_CANDIDATES = (
+    "/home/pi/TonyPi/Functions",
+    "/home/cat/TonyPi/Functions",
     "/home/pi/TonyPi",
     "/home/cat/TonyPi",
     os.path.join(os.path.dirname(_FUNCTIONS), "HiwonderSDK"),
@@ -22,16 +24,20 @@ _HIWONDER_CANDIDATES = (
 
 
 def _ensure_robot_paths() -> None:
-    if _FUNCTIONS not in sys.path:
-        sys.path.insert(0, _FUNCTIONS)
+    """Prefer the stock TonyPi Functions tree (FaceExpression + geometry json)."""
     for root in _HIWONDER_CANDIDATES:
-        if not root:
+        if not root or not os.path.isdir(root):
             continue
-        if os.path.isdir(root) and root not in sys.path:
-            sys.path.append(root)
+        if root not in sys.path:
+            sys.path.insert(0, root)
         sdk = os.path.join(root, "HiwonderSDK") if not root.endswith("HiwonderSDK") else root
         if os.path.isdir(sdk) and sdk not in sys.path:
             sys.path.append(sdk)
+        parent = os.path.dirname(root)
+        if os.path.isdir(parent) and parent not in sys.path:
+            sys.path.append(parent)
+    if os.path.isdir(_FUNCTIONS) and _FUNCTIONS not in sys.path:
+        sys.path.append(_FUNCTIONS)
 
 
 def _open_cv2_camera(index: int):

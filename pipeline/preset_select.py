@@ -28,7 +28,8 @@ from .preset_phrases import LOCO_PHRASE_IDS, PHRASE_INDEX, PHRASES, Phrase
 from .schemas import Decision, Perception
 
 
-PHRASE_HIST = 8
+# Any window of 10 consecutive phrases must be unique (ban the last 10 ids).
+PHRASE_HIST = 10
 CLIP_PHRASE_GAP = 3
 TAG_HIST = 6
 TOP_K = 8
@@ -239,6 +240,7 @@ class PhraseSelector:
         self.tag_hist_n = int(tag_hist)
         self.top_k = int(top_k)
         self.phrase_hist: Deque[str] = deque(maxlen=self.phrase_hist_n)
+        self.action_hist: Deque[str] = deque(maxlen=self.phrase_hist_n)
         self.clip_rounds: Deque[Tuple[str, ...]] = deque(maxlen=max(self.clip_gap, 4))
         self.tag_hist: Deque[Set[str]] = deque(maxlen=self.tag_hist_n)
         self.last_laterality: Optional[str] = None
@@ -246,6 +248,7 @@ class PhraseSelector:
 
     def reset(self) -> None:
         self.phrase_hist.clear()
+        self.action_hist.clear()
         self.clip_rounds.clear()
         self.tag_hist.clear()
         self.last_laterality = None
@@ -255,6 +258,7 @@ class PhraseSelector:
         if not choice or not choice.clips:
             return
         self.phrase_hist.append(choice.phrase_id)
+        self.action_hist.append(choice.action)
         clips = tuple(choice.clips)
         self.clip_rounds.append(clips)
         self.last_clips = clips
@@ -271,6 +275,9 @@ class PhraseSelector:
         reasons: List[str] = []
         if phrase.id in self.phrase_hist:
             reasons.append("phrase_repeat")
+        action = "+".join(phrase.clips)
+        if action in self.action_hist:
+            reasons.append("action_repeat")
         if self.last_clips and phrase.clips and phrase.clips[0] == self.last_clips[-1]:
             reasons.append("seam")
         if self.last_clips and clip_jaccard(phrase.clips, self.last_clips) >= JACCARD_BAN:
@@ -317,6 +324,8 @@ class PhraseSelector:
             if clip.recover or name not in ACTION_ALLOWLIST:
                 continue
             if name in recent or name == last:
+                continue
+            if ("fallback_%s" % name) in self.phrase_hist or name in self.action_hist:
                 continue
             hit = 1 if set(clip.tags) & prefer_tags else 0
             ranked.append((hit, name))
