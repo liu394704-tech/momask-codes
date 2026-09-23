@@ -150,4 +150,16 @@ Track A 保底不再轮播单个 ActionGroup：视觉 + 听觉打分后选一条
 （手写核心 + 组合扩展，见 `pipeline/preset_phrases.py`），会话内禁止 8 轮内重复同一 `phrase_id`、3 轮内重复同一 clip。
 日志里看 `phrase id=` / `clips=` / `recovery=`。停 / 前进后退转仍走硬规则（短步短语）。
 
+幻尔自带情绪只有脸（`FaceExpression`），没有听觉情绪。语音情绪要另装开源端侧模型
+`iic/emotion2vec_plus_seed`（FunASR / 魔搭，不是中转站）：
+
+```bash
+# 必须在能上网的局域网模式，不要连 HW 热点
+bash scripts/pi_install_audio_ser.sh
+export ENABLE_AUDIO_SER=1
+```
+
+说「小幻小幻」后同一段 wav：Whisper 出文本，emotion2vec 出 `audio_emotion`。
+未安装时循环仍可跑，只是 `audio_emotion` 为空。
+
 

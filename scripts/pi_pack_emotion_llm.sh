@@ -12,6 +12,7 @@ PACK=(
   scripts/pi_install_edge_llm.sh
   scripts/pi_download_qwen_gguf.sh
   scripts/pi_run_emotion_llm.sh
+  scripts/pi_install_audio_ser.sh
 )
 for rel in \
   源码/TonyPi/Functions/FaceExpression.py \

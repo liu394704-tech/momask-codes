@@ -154,6 +154,9 @@ def _build_perception(
     transcript: str,
     keyword: Optional[str],
     echo_error: Optional[str],
+    audio_emotion: Optional[str] = None,
+    audio_conf: float = 0.0,
+    ser_extra: Optional[Dict[str, Any]] = None,
 ) -> Perception:
     if args.mock_perception:
         perc = mock_perception(session, emotion=args.mock_emotion, conf=args.mock_conf)
@@ -162,6 +165,11 @@ def _build_perception(
             perc.extras["keyword"] = keyword
         if echo_error:
             perc.extras["keyword_unavailable"] = echo_error
+        if audio_emotion:
+            perc.audio_emotion = audio_emotion
+            perc.audio_conf = float(audio_conf or 0.0)
+        if ser_extra:
+            perc.extras.update(ser_extra)
         return perc
 
     perc = capture_perception_pi(
@@ -176,6 +184,11 @@ def _build_perception(
     )
     if echo_error:
         perc.extras["keyword_unavailable"] = echo_error
+    if audio_emotion:
+        perc.audio_emotion = audio_emotion
+        perc.audio_conf = float(audio_conf or 0.0)
+    if ser_extra:
+        perc.extras.update(ser_extra)
     return perc
 
 
@@ -230,10 +243,12 @@ def _log_round(
 
 
 def _print_round(perception: Perception, decision: Decision, track_a, path: Path, track_b=None, momask_on=False):
-    print("perception: face=%s emo=%s conf=%.2f keyword=%r transcript=%r" % (
+    print("perception: face=%s emo=%s conf=%.2f audio_emo=%s audio_conf=%.2f keyword=%r transcript=%r" % (
         perception.face_found,
         perception.vision_emotion,
         perception.vision_conf,
+        perception.audio_emotion,
+        perception.audio_conf,
         (perception.extras or {}).get("keyword"),
         perception.transcript,
     ))
@@ -262,9 +277,16 @@ def _print_round(perception: Perception, decision: Decision, track_a, path: Path
     print("log:", path)
 
 
-def run_one_round(args, session: str, transcript: str, keyword: Optional[str], echo_error: Optional[str], scheduler, selector=None):
+def run_one_round(
+    args, session: str, transcript: str, keyword: Optional[str], echo_error: Optional[str],
+    scheduler, selector=None, audio_emotion: Optional[str] = None, audio_conf: float = 0.0,
+    ser_extra: Optional[Dict[str, Any]] = None,
+):
     t0 = time.perf_counter()
-    perception = _build_perception(args, session, transcript, keyword, echo_error)
+    perception = _build_perception(
+        args, session, transcript, keyword, echo_error,
+        audio_emotion=audio_emotion, audio_conf=audio_conf, ser_extra=ser_extra,
+    )
     t_perc = time.perf_counter() - t0
     t1 = time.perf_counter()
     decision = run_decide(perception, backend=args.decide_backend)
@@ -464,6 +486,17 @@ def main() -> int:
                 continue
 
             print("\n===== round %d %s =====" % (n_done + 1, session), flush=True)
+            ser_extra = None
+            audio_emotion = None
+            audio_conf = 0.0
+            if event is not None:
+                audio_emotion = event.audio_emotion
+                audio_conf = float(event.audio_conf or 0.0)
+                if event.ser_error or event.audio_emotion:
+                    ser_extra = {
+                        "ser_error": event.ser_error,
+                        "ser_s": event.ser_s,
+                    }
             _perc, _dec, track_a = run_one_round(
                 args, session,
                 transcript=transcript,
@@ -471,6 +504,9 @@ def main() -> int:
                 echo_error=echo_error,
                 scheduler=scheduler,
                 selector=selector,
+                audio_emotion=audio_emotion,
+                audio_conf=audio_conf,
+                ser_extra=ser_extra,
             )
             n_done += 1
             if args.simulate and track_a.executed:

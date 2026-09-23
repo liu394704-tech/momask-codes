@@ -32,6 +32,8 @@ def _perc(**kwargs) -> Perception:
         face_found=kwargs.get("face_found", True),
         face_actions=list(kwargs.get("face_actions") or []),
         transcript=kwargs.get("transcript", ""),
+        audio_emotion=kwargs.get("audio_emotion"),
+        audio_conf=kwargs.get("audio_conf", 0.0),
         ok=True,
         extras=extras,
     )
@@ -86,6 +88,15 @@ class RuleDecideTests(unittest.TestCase):
         d = edge_rule_decide(_perc(emotion="neutral", face_found=False, conf=0.1))
         self.assertTrue(d.fallback)
         self.assertEqual(d.action_group, ["stand"])
+
+    def test_audio_ser_fills_missing_face(self):
+        d = edge_rule_decide(_perc(
+            emotion="neutral", face_found=False, conf=0.1,
+            audio_emotion="unhappy", audio_conf=0.72,
+        ))
+        self.assertEqual(d.emotion, "sad")
+        self.assertEqual(d.intent, "comfort_request")
+        self.assertIn("audio_ser", d.reason)
 
 
 class TrackAResolveTests(unittest.TestCase):

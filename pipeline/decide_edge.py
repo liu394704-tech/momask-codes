@@ -162,6 +162,17 @@ def edge_rule_decide(perception: Perception) -> Decision:
         intensity = "strong" if (
             "laugh_combo" in actions or "big_smile" in actions or "surprise_combo" in actions
         ) else intensity
+    audio_emo = (perception.audio_emotion or extras.get("audio_emotion") or "").strip().lower()
+    audio_conf = float(perception.audio_conf or extras.get("audio_conf") or 0.0)
+    if audio_emo in ("sad", "angry"):
+        audio_emo = "unhappy"
+    used_audio = False
+    if audio_emo in ("happy", "unhappy", "surprised", "neutral") and audio_conf >= 0.35:
+        if not perception.face_found or emo in ("", "neutral") or conf < 0.50:
+            emo = audio_emo
+            conf = max(conf, audio_conf)
+            intensity = "strong" if audio_conf >= 0.55 and audio_emo != "neutral" else intensity
+            used_audio = True
     mild = intensity != "strong"
 
     intent = "unknown"
@@ -175,7 +186,7 @@ def edge_rule_decide(perception: Perception) -> Decision:
         intent, group, prompt = hit
         conf = max(conf, 0.65)
         reason = "edge_rule:transcript"
-    elif not perception.face_found and not transcript:
+    elif not perception.face_found and not transcript and not used_audio:
         fallback = True
         group = ["stand"]
         prompt = ""
@@ -226,6 +237,8 @@ def edge_rule_decide(perception: Perception) -> Decision:
         else:
             reason = "edge_rule:neutral"
 
+    if used_audio:
+        reason = reason + "|audio_ser"
     if actions:
         reason = reason + "|actions:" + ",".join(actions[:6])
 

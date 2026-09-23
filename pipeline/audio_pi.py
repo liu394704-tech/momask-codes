@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Tuple
 
 from .actions import WONDERECHO_CMDS, keyword_phrase
+from .audio_emotion import infer_wav
 from .audio_mac import local_whisper_transcribe, record_mic_wav
 
 
@@ -33,6 +34,10 @@ class AudioEvent:
     asr_s: float = 0.0
     record_s: float = 0.0
     error: Optional[str] = None
+    audio_emotion: Optional[str] = None
+    audio_conf: float = 0.0
+    ser_s: float = 0.0
+    ser_error: Optional[str] = None
 
 
 @dataclass
@@ -139,6 +144,7 @@ def handle_echo_keyword(
         text, err, record_s, asr_s = record_and_transcribe(
             wav_path, duration_sec=duration_sec, whisper_size=whisper_size, language=language
         )
+        ser = infer_wav(wav_path) if os.path.isfile(wav_path) else None
         return AudioEvent(
             kind="asr" if text or not err else "wakeup",
             keyword="wakeup",
@@ -147,6 +153,10 @@ def handle_echo_keyword(
             asr_s=asr_s,
             record_s=record_s,
             error=err,
+            audio_emotion=(ser.robot_emotion if ser and ser.ok else None),
+            audio_conf=(ser.confidence if ser and ser.ok else 0.0),
+            ser_s=(ser.elapsed_s if ser else 0.0),
+            ser_error=(None if ser is None else ser.error),
         )
     phrase = keyword_phrase(name)
     return AudioEvent(kind="keyword", keyword=name, transcript=phrase)
