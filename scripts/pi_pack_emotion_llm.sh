@@ -17,6 +17,8 @@ PACK=(
   scripts/pi_install_audio_ser.sh
   scripts/pi_stage_weights_offline.sh
   scripts/pi_vnc_setup_and_run.sh
+  scripts/pi_emotion_llm_service.sh
+  scripts/pi_install_emotion_service.sh
   scripts/mac_download_edge_weights.sh
 )
 for rel in \
