@@ -29,6 +29,8 @@ _TRIAL = 0
 _LAST_EMOTION = None
 _LAST_CONF = 0.0
 _LAST_VISION_S = 0.0
+_FACE_HELD = 0
+_ENTER_ON_START = True
 
 
 def _repo_root():
@@ -188,10 +190,18 @@ def play_and_log(
             _BUSY = False
 
 
+def face_should_move(stable, face_held):
+    """A held face moves even when the expression stays neutral."""
+    if stable:
+        return stable
+    if face_held >= 8:
+        return "neutral"
+    return None
+
+
 def _maybe_launch(emotion, confidence, keyword):
-    if not emotion or emotion == "neutral":
-        if not keyword:
-            return
+    if not emotion and not keyword:
+        return
     if not _claim_busy():
         return
     threading.Thread(
@@ -298,14 +308,31 @@ def init():
     _STATUS = "ready"
 
 
+def _enter_motion():
+    """Wave as soon as the WonderPi button opens, then one greeting phrase."""
+    print("EmotionPhrase enter", flush=True)
+    if not _claim_busy():
+        return
+    try:
+        import hiwonder.ActionGroupControl as AGC  # type: ignore
+
+        AGC.runActionGroup("wave")
+    except Exception as exc:  # noqa: BLE001
+        print("EmotionPhrase wave:", exc)
+    play_and_log("happy", 0.66, None, trigger="enter", move=True)
+
+
 def start():
-    global _RUNNING, _STATUS, _ECHO_GEN
+    global _RUNNING, _STATUS, _ECHO_GEN, _FACE_HELD
     _ECHO_GEN += 1
     gen = _ECHO_GEN
+    _FACE_HELD = 0
     _RUNNING = True
     _STATUS = "look at the camera"
     print("EmotionPhrase Start")
     threading.Thread(target=_echo_loop, args=(gen,), daemon=True).start()
+    if _ENTER_ON_START:
+        threading.Thread(target=_enter_motion, daemon=True).start()
 
 
 def stop():
@@ -328,7 +355,7 @@ def exit():
 
 
 def run(img):
-    global _PENDING_KEYWORD, _STATUS, _LAST_EMOTION, _LAST_CONF, _LAST_VISION_S
+    global _PENDING_KEYWORD, _STATUS, _LAST_EMOTION, _LAST_CONF, _LAST_VISION_S, _FACE_HELD
     if img is None or not _RUNNING:
         return img
     analyzer = _load_analyzer()
@@ -350,14 +377,17 @@ def run(img):
             confidence = float(getattr(result, "emotion_score", 0.0) or 0.0)
             _LAST_EMOTION = emotion
             _LAST_CONF = confidence
+            _FACE_HELD += 1
             _scheduler().observe(emotion, confidence)
             _STATUS = "%s %.2f" % (emotion, confidence)
         else:
+            _FACE_HELD = 0
             _STATUS = "calibrating"
     else:
+        _FACE_HELD = 0
         _STATUS = "no face"
     stable, conf = stable_launch_emotion()
-    launch_emotion = stable
+    launch_emotion = face_should_move(stable, _FACE_HELD)
     if keyword or launch_emotion:
         _maybe_launch(launch_emotion or emotion or "neutral", conf or confidence, keyword)
     return _overlay(img, "phrase " + _STATUS)

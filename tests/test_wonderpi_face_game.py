@@ -10,11 +10,16 @@ from pipeline import wonderpi_face_game as game
 
 
 class WonderPiContractTests(unittest.TestCase):
+    def setUp(self):
+        game._ENTER_ON_START = False
+
     def tearDown(self):
         game.stop()
         game._RUNNING = False
         game._BUSY = False
         game._PENDING_KEYWORD = None
+        game._FACE_HELD = 0
+        game._ENTER_ON_START = True
 
     def test_exports_match_facedetect(self):
         for name in ("init", "start", "stop", "exit", "run"):
@@ -40,6 +45,11 @@ class WonderPiContractTests(unittest.TestCase):
         stable, conf = game.stable_launch_emotion()
         self.assertEqual(stable, "happy")
         self.assertGreater(conf, 0.5)
+
+    def test_held_face_moves_even_when_neutral(self):
+        self.assertIsNone(game.face_should_move(None, 3))
+        self.assertEqual(game.face_should_move(None, 8), "neutral")
+        self.assertEqual(game.face_should_move("happy", 0), "happy")
 
     def test_play_and_log_writes_latency_without_moving(self):
         import os
