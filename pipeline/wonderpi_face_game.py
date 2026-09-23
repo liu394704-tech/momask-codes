@@ -31,6 +31,8 @@ _LAST_CONF = 0.0
 _LAST_VISION_S = 0.0
 _FACE_HELD = 0
 _ENTER_ON_START = True
+_LATEST = None
+_VISION_GEN = 0
 
 
 def _repo_root():
@@ -300,12 +302,56 @@ def stable_launch_emotion():
     return stable, conf
 
 
-def init():
-    print("EmotionPhrase Init")
-    _load_analyzer()
-    _scheduler().reset() if hasattr(_scheduler(), "reset") else None
+def _apply_vision(result, vision_s):
+    """Update emotion from a frame already processed off the camera thread."""
+    global _STATUS, _LAST_EMOTION, _LAST_CONF, _LAST_VISION_S, _FACE_HELD
+    _LAST_VISION_S = vision_s
+    emotion = None
+    confidence = 0.0
+    if result is not None and getattr(result, "found", False):
+        if not getattr(result, "calibrating", False) and getattr(result, "emotion", None):
+            emotion = result.emotion
+            confidence = float(getattr(result, "emotion_score", 0.0) or 0.0)
+            _LAST_EMOTION = emotion
+            _LAST_CONF = confidence
+            _FACE_HELD += 1
+            _scheduler().observe(emotion, confidence)
+            _STATUS = "%s %.2f" % (emotion, confidence)
+        else:
+            _FACE_HELD = 0
+            _STATUS = "calibrating"
+    else:
+        _FACE_HELD = 0
+        _STATUS = "no face"
+    stable, conf = stable_launch_emotion()
+    launch_emotion = face_should_move(stable, _FACE_HELD)
+    if launch_emotion:
+        _maybe_launch(launch_emotion, conf or confidence, None)
+
+
+def _vision_loop(gen):
     global _STATUS
-    _STATUS = "ready"
+    analyzer = _load_analyzer()
+    while _RUNNING and _VISION_GEN == gen:
+        frame = _LATEST
+        if analyzer is None or frame is None:
+            time.sleep(0.05)
+            continue
+        try:
+            t0 = time.perf_counter()
+            result = analyzer.process(frame)
+            _apply_vision(result, time.perf_counter() - t0)
+        except Exception as exc:  # noqa: BLE001
+            _STATUS = "vision %s" % str(exc)[:40]
+            print("EmotionPhrase vision:", exc)
+        time.sleep(0.02)
+
+
+def init():
+    global _STATUS
+    print("EmotionPhrase Init")
+    _scheduler().reset() if hasattr(_scheduler(), "reset") else None
+    _STATUS = "camera"
 
 
 def _enter_motion():
@@ -323,14 +369,17 @@ def _enter_motion():
 
 
 def start():
-    global _RUNNING, _STATUS, _ECHO_GEN, _FACE_HELD
+    global _RUNNING, _STATUS, _ECHO_GEN, _FACE_HELD, _VISION_GEN
     _ECHO_GEN += 1
+    _VISION_GEN += 1
     gen = _ECHO_GEN
+    vision_gen = _VISION_GEN
     _FACE_HELD = 0
     _RUNNING = True
-    _STATUS = "look at the camera"
+    _STATUS = "camera"
     print("EmotionPhrase Start")
     threading.Thread(target=_echo_loop, args=(gen,), daemon=True).start()
+    threading.Thread(target=_vision_loop, args=(vision_gen,), daemon=True).start()
     if _ENTER_ON_START:
         threading.Thread(target=_enter_motion, daemon=True).start()
 
@@ -355,39 +404,17 @@ def exit():
 
 
 def run(img):
-    global _PENDING_KEYWORD, _STATUS, _LAST_EMOTION, _LAST_CONF, _LAST_VISION_S, _FACE_HELD
-    if img is None or not _RUNNING:
+    """Return the camera frame immediately so WonderPi never stays on loading."""
+    global _PENDING_KEYWORD, _LATEST
+    if img is None:
         return img
-    analyzer = _load_analyzer()
+    if not _RUNNING:
+        return img
+    _LATEST = img
     keyword = _PENDING_KEYWORD
     _PENDING_KEYWORD = None
-    if analyzer is None:
-        return _overlay(img, _ANALYZER_ERROR or "no FaceExpression")
-    try:
-        t_vision = time.perf_counter()
-        result = analyzer.process(img)
-        _LAST_VISION_S = time.perf_counter() - t_vision
-    except Exception as exc:  # noqa: BLE001
-        return _overlay(img, "vision %s" % str(exc)[:40])
-    emotion = None
-    confidence = 0.0
-    if result is not None and getattr(result, "found", False):
-        if not getattr(result, "calibrating", False) and getattr(result, "emotion", None):
-            emotion = result.emotion
-            confidence = float(getattr(result, "emotion_score", 0.0) or 0.0)
-            _LAST_EMOTION = emotion
-            _LAST_CONF = confidence
-            _FACE_HELD += 1
-            _scheduler().observe(emotion, confidence)
-            _STATUS = "%s %.2f" % (emotion, confidence)
-        else:
-            _FACE_HELD = 0
-            _STATUS = "calibrating"
-    else:
-        _FACE_HELD = 0
-        _STATUS = "no face"
-    stable, conf = stable_launch_emotion()
-    launch_emotion = face_should_move(stable, _FACE_HELD)
-    if keyword or launch_emotion:
-        _maybe_launch(launch_emotion or emotion or "neutral", conf or confidence, keyword)
+    if keyword:
+        _maybe_launch(_LAST_EMOTION or "neutral", _LAST_CONF, keyword)
+    if _ANALYZER_ERROR and _ANALYZER is None:
+        return _overlay(img, _ANALYZER_ERROR)
     return _overlay(img, "phrase " + _STATUS)

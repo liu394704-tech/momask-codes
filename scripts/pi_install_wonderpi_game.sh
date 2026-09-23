@@ -50,7 +50,20 @@ path.write_text(text, encoding="utf-8")
 pathlib.Path(shim).write_text(
     "import sys\n"
     "sys.path.insert(0, %r)\n"
-    "from pipeline.wonderpi_face_game import init, start, stop, exit, run\n" % root,
+    "try:\n"
+    "    from pipeline.wonderpi_face_game import init, start, stop, exit, run\n"
+    "except Exception as exc:\n"
+    "    print('EmotionPhrase import failed:', exc)\n"
+    "    def init():\n"
+    "        print('EmotionPhrase fallback init')\n"
+    "    def start():\n"
+    "        print('EmotionPhrase fallback start')\n"
+    "    def stop():\n"
+    "        print('EmotionPhrase fallback stop')\n"
+    "    def exit():\n"
+    "        print('EmotionPhrase fallback exit')\n"
+    "    def run(img):\n"
+    "        return img\n" % root,
     encoding="utf-8",
 )
 print("patched", running)
@@ -59,8 +72,20 @@ print("backup", backup)
 PY
 
 systemctl disable --now tonypi-emotion-llm.service 2>/dev/null || true
+systemctl stop tonypi.service 2>/dev/null || systemctl stop tonypi 2>/dev/null || true
+# The earlier terminal loop keeps the camera, which leaves WonderPi on loading.
+pkill -f "pipeline.run_pi_emotion_llm" 2>/dev/null || true
+pkill -f "pipeline.bench_pi_latency" 2>/dev/null || true
+sleep 1
 systemctl enable tonypi.service 2>/dev/null || true
 systemctl restart tonypi.service 2>/dev/null || systemctl restart tonypi
-echo "tonypi restarted. Open WonderPi and enter 人脸识别."
-echo "Stay on that screen. Smile, frown, or say the wake word."
+sleep 2
+if systemctl is-active --quiet tonypi.service || systemctl is-active --quiet tonypi; then
+  echo "tonypi is running. WonderPi should show the camera, then enter 人脸识别."
+else
+  echo "tonypi did not stay up. Last log:" >&2
+  journalctl -u tonypi -n 40 --no-pager >&2 || true
+  exit 1
+fi
+echo "Stay on that screen. The picture must appear before the robot waves."
 echo "Each phrase is logged with timings at $ROOT/pipeline_runs/latency/wonderpi_latency.csv"
