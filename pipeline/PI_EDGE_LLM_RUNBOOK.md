@@ -189,4 +189,30 @@ export ENABLE_AUDIO_SER=1
 说「小幻小幻」后同一段 wav：Whisper 出文本，emotion2vec 出 `audio_emotion`。
 未安装时循环仍可跑，只是 `audio_emotion` 为空。
 
+---
+
+## D. 用 WonderPi 启动（装一次，之后不用 VNC）
+
+手机 App 只有 12 个固定按钮，不能加第 13 个。安装脚本把功能 6「人脸识别」换成 778 条短语循环。其他 11 个玩法不变。TonyPi 必须保持开机自启；不要再开 `tonypi-emotion-llm`，那个服务会抢走摄像头。
+
+电脑先连能上网的 Wi-Fi，拉到这条分支，再改连 HW*（192.168.149.1）：
+
+```bash
+cd /Users/emmaliu/Desktop/HKUST/RBM-project/Model/momask-codes
+git fetch origin cursor/cloud-agent-1790042632488-ttam2
+git checkout -B cursor/cloud-agent-1790042632488-ttam2 origin/cursor/cloud-agent-1790042632488-ttam2
+
+scp /Users/emmaliu/Desktop/HKUST/RBM-project/Model/momask-codes/pipeline/wonderpi_face_game.py \
+  pi@192.168.149.1:/home/pi/RBM-project/momask-codes/pipeline/wonderpi_face_game.py
+scp /Users/emmaliu/Desktop/HKUST/RBM-project/Model/momask-codes/scripts/pi_install_wonderpi_game.sh \
+  pi@192.168.149.1:/home/pi/RBM-project/momask-codes/scripts/pi_install_wonderpi_game.sh
+
+ssh pi@192.168.149.1
+sudo bash /home/pi/RBM-project/momask-codes/scripts/pi_install_wonderpi_game.sh
+```
+
+SSH 密码是树莓派用户 `pi` 的密码，不是热点密码 `hiwonder`。脚本会备份 `Running.py`，写入 `Functions/EmotionPhrase.py`，关掉情绪开机服务，并重启 `tonypi`。
+
+然后只开 WonderPi：进入「人脸识别」，人对着胸口摄像头。画面上会先显示 calibrating，再显示情绪。保持微笑或皱眉大约 1 秒，身体会播一条 2–3 个片段的短语。两条动作之间大约 6–12 秒。停在这个页面里；离开页面约 7 秒后心跳超时，玩法会退出并回到站立。
+
 

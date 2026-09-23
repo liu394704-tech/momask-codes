@@ -19,6 +19,8 @@ PACK=(
   scripts/pi_vnc_setup_and_run.sh
   scripts/pi_emotion_llm_service.sh
   scripts/pi_install_emotion_service.sh
+  scripts/pi_install_wonderpi_game.sh
+  tests/test_wonderpi_face_game.py
   scripts/mac_download_edge_weights.sh
 )
 for rel in \
