@@ -115,6 +115,7 @@ def finish_round(
     calib_s: float = 0.0,
     move: bool = False,
     selector: Optional[PhraseSelector] = None,
+    scheduler=None,
 ) -> Dict[str, Any]:
     """Time decide + phrase selection for an already built perception."""
     t0 = time.perf_counter()
@@ -127,6 +128,7 @@ def finish_round(
         simulate=not move,
         execute_robot=bool(move),
         keyword=(perception.extras or {}).get("keyword"),
+        scheduler=scheduler,
         perception=perception,
         selector=picker,
     )
@@ -158,6 +160,17 @@ def finish_round(
         "识别到决策_s": round(to_decision, 3),
         "总_s": round(total, 3),
     }
+
+
+def append_latency_row(path: Path, row: Dict[str, Any]) -> None:
+    """Append one round to a CSV, creating the header on the first write."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=COLUMNS)
+        if path.stat().st_size == 0:
+            writer.writeheader()
+        writer.writerow(row)
 
 
 def _median(rows: List[Dict[str, Any]], key: str) -> Optional[float]:

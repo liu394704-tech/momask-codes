@@ -41,6 +41,33 @@ class WonderPiContractTests(unittest.TestCase):
         self.assertEqual(stable, "happy")
         self.assertGreater(conf, 0.5)
 
+    def test_play_and_log_writes_latency_without_moving(self):
+        import os
+        import tempfile
+        from pathlib import Path
+
+        game._SCHEDULER = None
+        game._SELECTOR = None
+        game._BUSY = False
+        handle = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+        handle.close()
+        previous_backend = os.environ.get("DECIDE_BACKEND")
+        os.environ["WONDERPI_LATENCY_CSV"] = handle.name
+        os.environ["DECIDE_BACKEND"] = "edge"
+        try:
+            game.play_and_log("happy", 0.8, None, trigger="face", vision_s=0.05, move=False)
+            text = Path(handle.name).read_text(encoding="utf-8-sig")
+        finally:
+            os.environ.pop("WONDERPI_LATENCY_CSV", None)
+            if previous_backend is None:
+                os.environ.pop("DECIDE_BACKEND", None)
+            else:
+                os.environ["DECIDE_BACKEND"] = previous_backend
+            Path(handle.name).unlink(missing_ok=True)
+        self.assertIn("识别到决策_s", text)
+        self.assertIn("happy", text)
+        self.assertIn("face", text)
+
     def test_start_run_does_not_raise_without_robot(self):
         img = np.zeros((48, 64, 3), dtype=np.uint8)
         game.init()

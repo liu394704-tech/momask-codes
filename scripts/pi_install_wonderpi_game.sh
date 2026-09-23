@@ -62,4 +62,5 @@ systemctl disable --now tonypi-emotion-llm.service 2>/dev/null || true
 systemctl enable tonypi.service 2>/dev/null || true
 systemctl restart tonypi.service 2>/dev/null || systemctl restart tonypi
 echo "tonypi restarted. Open WonderPi and enter 人脸识别."
-echo "Stay on that screen. A smile or frown held for about a second plays one of 778 phrases."
+echo "Stay on that screen. Smile, frown, or say the wake word."
+echo "Each phrase is logged with timings at $ROOT/pipeline_runs/latency/wonderpi_latency.csv"

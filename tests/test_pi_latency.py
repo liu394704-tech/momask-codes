@@ -9,6 +9,7 @@ from pathlib import Path
 
 from pipeline.bench_pi_latency import (
     COLUMNS,
+    append_latency_row,
     decide_impl,
     finish_round,
     probe_stack,
@@ -75,6 +76,23 @@ class LatencyBenchTests(unittest.TestCase):
             self.assertEqual(list(found[0].keys()), COLUMNS)
             self.assertEqual(found[0]["识别错误"], "no_keyword")
             self.assertTrue(path.with_suffix(".json").is_file())
+
+    def test_append_keeps_a_single_header(self):
+        row = finish_round(
+            _perc(),
+            trial=1,
+            trigger="face",
+            requested_backend="edge",
+            vision_s=0.2,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "wonderpi_latency.csv"
+            append_latency_row(path, row)
+            row["轮次"] = 2
+            append_latency_row(path, row)
+            text = path.read_text(encoding="utf-8-sig")
+        self.assertEqual(text.count("轮次"), 1)
+        self.assertEqual(text.count("\n"), 3)
 
 
 if __name__ == "__main__":

@@ -25,6 +25,10 @@ _ECHO = None
 _ECHO_GEN = 0
 _PENDING_KEYWORD = None
 _STATUS = "idle"
+_TRIAL = 0
+_LAST_EMOTION = None
+_LAST_CONF = 0.0
+_LAST_VISION_S = 0.0
 
 
 def _repo_root():
@@ -93,38 +97,89 @@ def _overlay(img, text):
     return img
 
 
-def _play_phrase(emotion, confidence, keyword):
-    global _BUSY, _STATUS
+def latency_csv_path():
+    override = os.environ.get("WONDERPI_LATENCY_CSV", "").strip()
+    if override:
+        return override
+    return os.path.join(_repo_root(), "pipeline_runs", "latency", "wonderpi_latency.csv")
+
+
+def _decide_backend():
+    return os.environ.get("DECIDE_BACKEND", "edge_auto").strip() or "edge_auto"
+
+
+def _claim_busy():
+    global _BUSY
+    if not _scheduler().can_schedule():
+        return False
+    with _LOCK:
+        if _BUSY:
+            return False
+        _BUSY = True
+    return True
+
+
+def play_and_log(
+    emotion,
+    confidence,
+    keyword,
+    transcript="",
+    audio_emotion=None,
+    audio_conf=0.0,
+    trigger="face",
+    record_s=0.0,
+    asr_s=0.0,
+    asr_error=None,
+    ser_s=0.0,
+    ser_error=None,
+    wake_wait_s=0.0,
+    vision_s=0.0,
+    move=True,
+):
+    """Face + ASR text + audio emotion -> edge decide -> one of 778 phrases."""
+    global _BUSY, _STATUS, _TRIAL
     try:
         _ensure_paths()
         from pipeline.actions import normalize_emotion
-        from pipeline.decide_edge import edge_rule_decide
+        from pipeline.bench_pi_latency import append_latency_row, finish_round
         from pipeline.schemas import Perception
-        from pipeline.track_a import run_track_a
 
-        emo = normalize_emotion(emotion)
+        emo = normalize_emotion(emotion or "neutral")
+        face_found = bool(emotion) and emo != "neutral"
+        with _LOCK:
+            _TRIAL += 1
+            trial = _TRIAL
         perception = Perception(
             session_id="wonderpi",
             ts_ms=int(time.time() * 1000),
-            vision_emotion=emo,
+            vision_emotion=emo if emotion else None,
             vision_conf=float(confidence or 0.0),
-            face_found=True,
-            transcript="",
+            face_found=face_found or bool(emotion),
+            transcript=transcript or "",
+            audio_emotion=audio_emotion,
+            audio_conf=float(audio_conf or 0.0),
             ok=True,
             extras={"keyword": keyword} if keyword else {},
         )
-        decision = edge_rule_decide(perception)
-        result = run_track_a(
-            decision,
-            simulate=False,
-            execute_robot=True,
-            keyword=keyword,
-            scheduler=_scheduler(),
-            perception=perception,
+        row = finish_round(
+            perception,
+            trial=trial,
+            trigger=trigger,
+            requested_backend=_decide_backend(),
+            wake_wait_s=wake_wait_s,
+            record_s=record_s,
+            asr_s=asr_s,
+            asr_error=asr_error,
+            ser_s=ser_s,
+            ser_error=ser_error,
+            vision_s=vision_s,
+            move=move,
             selector=_selector(),
+            scheduler=_scheduler(),
         )
-        _STATUS = "%s %s" % (emo, result.action or "")
-        print("EmotionPhrase", _STATUS, result.detail)
+        append_latency_row(latency_csv_path(), row)
+        _STATUS = "%s %s %.2fs" % (row["人脸情绪"] or emo, row["短语"], row["识别到决策_s"])
+        print("EmotionPhrase", _STATUS, "csv", latency_csv_path())
     except Exception as exc:  # noqa: BLE001
         _STATUS = "play failed"
         print("EmotionPhrase play:", exc)
@@ -134,22 +189,60 @@ def _play_phrase(emotion, confidence, keyword):
 
 
 def _maybe_launch(emotion, confidence, keyword):
-    global _BUSY
     if not emotion or emotion == "neutral":
         if not keyword:
             return
-    scheduler = _scheduler()
-    if not scheduler.can_schedule():
+    if not _claim_busy():
         return
-    with _LOCK:
-        if _BUSY:
-            return
-        _BUSY = True
     threading.Thread(
-        target=_play_phrase,
-        args=(emotion, confidence, keyword),
+        target=play_and_log,
+        kwargs={
+            "emotion": emotion,
+            "confidence": confidence,
+            "keyword": keyword,
+            "trigger": "keyword" if keyword else "face",
+            "vision_s": _LAST_VISION_S,
+            "move": True,
+        },
         daemon=True,
     ).start()
+
+
+def _play_wakeup(heard_at):
+    """Record after the wake word, run local ASR, then the phrase loop."""
+    try:
+        _ensure_paths()
+        from pipeline.audio_pi import handle_echo_keyword
+
+        wav_dir = os.path.join(_repo_root(), "pipeline_runs", "latency")
+        os.makedirs(wav_dir, exist_ok=True)
+        wav = os.path.join(wav_dir, "wakeup_%d.wav" % int(time.time()))
+        duration = float(os.environ.get("AUDIO_SEC", "3") or "3")
+        before_record = time.perf_counter()
+        event = handle_echo_keyword("wakeup", wav, duration_sec=duration)
+        play_and_log(
+            _LAST_EMOTION,
+            _LAST_CONF,
+            "wakeup",
+            transcript=event.transcript or "",
+            audio_emotion=event.audio_emotion,
+            audio_conf=event.audio_conf,
+            trigger="wakeup",
+            record_s=event.record_s,
+            asr_s=event.asr_s,
+            asr_error=event.error,
+            ser_s=event.ser_s,
+            ser_error=event.ser_error,
+            wake_wait_s=max(0.0, before_record - heard_at),
+            vision_s=_LAST_VISION_S,
+            move=True,
+        )
+    except Exception as exc:  # noqa: BLE001
+        global _BUSY, _STATUS
+        _STATUS = "asr failed"
+        print("EmotionPhrase asr:", exc)
+        with _LOCK:
+            _BUSY = False
 
 
 def _echo_loop(gen):
@@ -170,7 +263,13 @@ def _echo_loop(gen):
             word = listener.poll()
         except Exception:
             word = None
-        if word:
+        if word == "wakeup":
+            if _claim_busy():
+                print("EmotionPhrase wakeup", flush=True)
+                threading.Thread(
+                    target=_play_wakeup, args=(time.perf_counter(),), daemon=True,
+                ).start()
+        elif word:
             _PENDING_KEYWORD = word
             print("EmotionPhrase keyword", word)
         time.sleep(0.05)
@@ -229,7 +328,7 @@ def exit():
 
 
 def run(img):
-    global _PENDING_KEYWORD, _STATUS
+    global _PENDING_KEYWORD, _STATUS, _LAST_EMOTION, _LAST_CONF, _LAST_VISION_S
     if img is None or not _RUNNING:
         return img
     analyzer = _load_analyzer()
@@ -238,7 +337,9 @@ def run(img):
     if analyzer is None:
         return _overlay(img, _ANALYZER_ERROR or "no FaceExpression")
     try:
+        t_vision = time.perf_counter()
         result = analyzer.process(img)
+        _LAST_VISION_S = time.perf_counter() - t_vision
     except Exception as exc:  # noqa: BLE001
         return _overlay(img, "vision %s" % str(exc)[:40])
     emotion = None
@@ -247,6 +348,8 @@ def run(img):
         if not getattr(result, "calibrating", False) and getattr(result, "emotion", None):
             emotion = result.emotion
             confidence = float(getattr(result, "emotion_score", 0.0) or 0.0)
+            _LAST_EMOTION = emotion
+            _LAST_CONF = confidence
             _scheduler().observe(emotion, confidence)
             _STATUS = "%s %.2f" % (emotion, confidence)
         else:
