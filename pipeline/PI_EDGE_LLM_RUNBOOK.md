@@ -152,10 +152,24 @@ Track A 保底不再轮播单个 ActionGroup：视觉 + 听觉打分后选一条
 每个片段在动作名确定之后会补一版 16 路总线脉宽 + 毫米坐标（站立=500，机身 373×186×106 mm，左臂抬手用官方抓取课 14=180/15=260/16=650）。这是按仓库尺寸模拟的坐标层，真机仍播出厂 `.d6a`。日志里看 `coords:` / `coords_peak`。
 
 幻尔自带情绪只有脸（`FaceExpression`），没有听觉情绪。语音情绪要另装开源端侧模型
-`iic/emotion2vec_plus_seed`（FunASR / 魔搭，不是中转站）：
+`iic/emotion2vec_plus_seed`（FunASR / 魔搭，不是中转站）。
+
+**只连 HW 热点时：机器人上不了网，不能在热点里从魔搭/HF 拉权重。**
+脸模已经在 `/home/pi/TonyPi/Functions`，778 条短语也不要额外权重，连着 `HW*` 就能跑动作闭环。
+Qwen GGUF / emotion2vec 只能「别处下好 → 经热点拷进去」：
 
 ```bash
-# 必须在能上网的局域网模式，不要连 HW 热点
+# 电脑已连 HW*（机器人 192.168.149.1），文件事先在 U 盘或电脑上
+scp qwen2.5-1.5b-instruct-q4_k_m.gguf cat@192.168.149.1:~/RBM-project/momask-codes/models/edge_llm/
+# 树莓派 VNC：
+bash scripts/pi_stage_weights_offline.sh
+# 或指定 U 盘挂载点
+bash scripts/pi_stage_weights_offline.sh /media/pi/USB
+```
+
+有局域网时再装运行时和在线下载：
+
+```bash
 bash scripts/pi_install_audio_ser.sh
 export ENABLE_AUDIO_SER=1
 ```

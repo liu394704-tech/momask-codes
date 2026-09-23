@@ -10,10 +10,12 @@ PACK=(
   tests/test_pi_emotion_llm.py
   tests/test_preset_phrases.py
   tests/test_tonypi_coords.py
+  tests/test_offline_weights.py
   scripts/pi_install_edge_llm.sh
   scripts/pi_download_qwen_gguf.sh
   scripts/pi_run_emotion_llm.sh
   scripts/pi_install_audio_ser.sh
+  scripts/pi_stage_weights_offline.sh
 )
 for rel in \
   源码/TonyPi/Functions/FaceExpression.py \

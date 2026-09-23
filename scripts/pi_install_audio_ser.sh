@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Install on-device speech emotion (emotion2vec+ seed) on the TonyPi.
-# Requires LAN/internet (not the robot HW hotspot). Not the cloud 中转站.
+# Needs LAN/internet to pip + ModelScope. On HW* hotspot, only a local copy works.
+# Not the cloud 中转站.
 set -euo pipefail
 
 ROOT="${1:-$PWD}"
@@ -15,6 +16,25 @@ export PIP_INDEX_URL="${PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}
 export AUDIO_SER_MODEL="${AUDIO_SER_MODEL:-iic/emotion2vec_plus_seed}"
 export AUDIO_SER_CACHE="${AUDIO_SER_CACHE:-$ROOT/models/audio_ser}"
 mkdir -p "$AUDIO_SER_CACHE"
+
+if [[ -x "$ROOT/scripts/pi_stage_weights_offline.sh" ]]; then
+  bash "$ROOT/scripts/pi_stage_weights_offline.sh" "${WEIGHTS_SRC:-}" || true
+fi
+
+_can_reach_hub() {
+  [[ "${OFFLINE:-0}" == "1" ]] && return 1
+  if ! ip route show default 2>/dev/null | grep -q .; then
+    return 1
+  fi
+  ping -c 1 -W 2 223.5.5.5 >/dev/null 2>&1 || ping -c 1 -W 2 1.1.1.1 >/dev/null 2>&1
+}
+
+if ! _can_reach_hub; then
+  echo "no internet (HW hotspot / OFFLINE=1). Skip pip + ModelScope."
+  echo "SER files, if any, must already be in $AUDIO_SER_CACHE"
+  echo "Face + 778 phrases still run. audio_emotion stays empty without weights."
+  exit 0
+fi
 
 echo "== pip: funasr + modelscope (CPU SER) =="
 pip install -U pip
