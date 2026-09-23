@@ -1,13 +1,28 @@
 #!/usr/bin/env python3
-"""Track A: preset ActionGroup via EmotionActionScheduler (simulate on Mac)."""
+"""Track A: multimodal preset phrases via PhraseSelector.
+
+Mac default is simulate=True. On the Pi, execute_robot=True plays the chosen
+clip sequence (random pause + stand/stand_slow recovery). Kick / punch groups
+never run.
+"""
 from __future__ import annotations
 
 import os
+import random
 import sys
 import time
-from typing import Optional
+from typing import Optional, Tuple
 
-from .schemas import Decision, TrackAResult
+from .actions import (
+    LOCOMOTION_ACTIONS,
+    is_stop_signal,
+    locomotion_times,
+    normalize_emotion,
+    sanitize_action_group,
+)
+from .preset_select import PhraseChoice, PhraseSelector, get_default_selector
+from .schemas import Decision, Perception, TrackAResult
+from .tonypi_coords import simulate_clips, summarize_motion
 
 _FUNCTIONS = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -20,21 +35,139 @@ _FUNCTIONS = os.path.join(
 def _import_scheduler():
     if _FUNCTIONS not in sys.path:
         sys.path.insert(0, _FUNCTIONS)
-    from EmotionActionScheduler import (  # type: ignore
-        EmotionActionScheduler,
-        intensity_from_confidence,
+    try:
+        from EmotionActionScheduler import (  # type: ignore
+            EmotionActionScheduler,
+            intensity_from_confidence,
+        )
+        return EmotionActionScheduler, intensity_from_confidence
+    except Exception:
+        from .emotion_scheduler import (  # type: ignore
+            EmotionActionScheduler,
+            intensity_from_confidence,
+        )
+        return EmotionActionScheduler, intensity_from_confidence
+
+
+def resolve_phrase(
+    decision: Decision,
+    scheduler=None,
+    intensity: str = "mild",
+    keyword: Optional[str] = None,
+    perception: Optional[Perception] = None,
+    selector: Optional[PhraseSelector] = None,
+    rng: Optional[random.Random] = None,
+) -> PhraseChoice:
+    """Pick a diversity-aware phrase. Stop and locomotion hard-rules win."""
+    picker = selector or get_default_selector()
+    return picker.select(
+        perception,
+        decision,
+        keyword=keyword,
+        intensity=intensity,
+        rng=rng,
     )
-    return EmotionActionScheduler, intensity_from_confidence
+
+
+def resolve_action(
+    decision: Decision,
+    scheduler=None,
+    intensity: str = "mild",
+    keyword: Optional[str] = None,
+    perception: Optional[Perception] = None,
+    selector: Optional[PhraseSelector] = None,
+    rng: Optional[random.Random] = None,
+) -> Tuple[Optional[str], str]:
+    """Compatibility wrapper: joined clip names + source."""
+    choice = resolve_phrase(
+        decision,
+        scheduler=scheduler,
+        intensity=intensity,
+        keyword=keyword,
+        perception=perception,
+        selector=selector,
+        rng=rng,
+    )
+    return choice.action or None, choice.source
+
+
+def _execute_robot_clips(
+    clips: list,
+    recovery: Optional[str],
+    pause_s: float,
+) -> Tuple[bool, str]:
+    try:
+        import hiwonder.ActionGroupControl as AGC  # type: ignore
+    except Exception as exc:  # noqa: BLE001
+        return False, "robot_import_failed: %s" % exc
+
+    try:
+        for index, clip in enumerate(clips):
+            if clip in LOCOMOTION_ACTIONS:
+                AGC.runActionGroup(clip, locomotion_times(clip), True)
+            else:
+                AGC.runActionGroup(clip)
+            if index + 1 < len(clips) and pause_s > 0:
+                time.sleep(pause_s)
+        if recovery and recovery not in clips[-1:]:
+            AGC.runActionGroup(recovery)
+        return True, "robot_executed"
+    except Exception as exc:  # noqa: BLE001
+        return False, "robot_exec_failed: %s" % exc
+
+
+def _attach_coords(result: TrackAResult, clips: list, recovery: Optional[str]) -> TrackAResult:
+    """Author 16-servo pulses + mm coordinates after the clip list is fixed."""
+    try:
+        motion = simulate_clips(clips, recovery=recovery)
+    except Exception as exc:  # noqa: BLE001
+        result.coord_summary = "coords_failed: %s" % exc
+        return result
+    result.pulses = [list(p.pulses) for p in motion.poses]
+    result.coords = motion.compact()
+    result.coord_summary = summarize_motion(motion)
+    return result
+
+
+def _result(
+    executed: bool,
+    choice: Optional[PhraseChoice],
+    intensity: str,
+    simulated: bool,
+    detail: str,
+) -> TrackAResult:
+    clips = list(choice.clips) if choice else []
+    recovery = choice.recovery if choice else None
+    result = TrackAResult(
+        executed=executed,
+        action=choice.action if choice else None,
+        intensity=intensity,
+        simulated=simulated,
+        detail=detail,
+        phrase_id=choice.phrase_id if choice else None,
+        clips=clips,
+        recovery=recovery,
+        bans=list(choice.bans) if choice else [],
+    )
+    if clips:
+        _attach_coords(result, clips, recovery)
+    return result
 
 
 def run_track_a(
     decision: Decision,
     simulate: bool = True,
     execute_robot: bool = False,
+    keyword: Optional[str] = None,
+    scheduler=None,
+    perception: Optional[Perception] = None,
+    selector: Optional[PhraseSelector] = None,
+    rng: Optional[random.Random] = None,
 ) -> TrackAResult:
-    """Plan (and optionally execute) a preset action from decision.
+    """Plan (and optionally execute) a preset phrase from decision + perception.
 
     On Mac, default is simulate=True (no hiwonder). Robot execution is opt-in.
+    Phrase selection overrides a single `action_group` name except stop / locomotion.
     """
     try:
         EmotionActionScheduler, intensity_from_confidence = _import_scheduler()
@@ -46,69 +179,71 @@ def run_track_a(
             detail="scheduler_import_failed: %s" % exc,
         )
 
-    emotion = decision.emotion
-    # Map fine labels back to scheduler's 4-class space.
-    if emotion in ("sad", "angry"):
-        emotion = "unhappy"
-    if emotion not in ("neutral", "happy", "unhappy", "surprised"):
-        emotion = "neutral"
-
     intensity = intensity_from_confidence(decision.confidence)
-    scheduler = EmotionActionScheduler()
-    # Prefer decision.action_group[0] if present and allowed by pools.
-    preferred = (decision.action_group or [None])[0]
-    pools = scheduler.action_map.get(emotion) or {"mild": [], "strong": []}
-    pool = list(pools.get(intensity) or []) or list(pools.get("mild") or [])
-    action = None
-    if preferred and preferred in (pools.get("mild") or []) + (pools.get("strong") or []):
-        action = preferred
-    elif pool:
-        action = scheduler.pick_action(emotion, intensity=intensity)
-    elif preferred:
-        action = preferred
+    own_scheduler = scheduler is None
+    if scheduler is None:
+        scheduler = EmotionActionScheduler()
 
-    if emotion == "neutral" or not action:
-        return TrackAResult(
-            executed=False,
-            action=None,
-            intensity=intensity,
-            simulated=simulate,
-            detail="no_preset_action",
-        )
+    picker = selector or get_default_selector()
+    rng = rng or random.Random()
+    choice = resolve_phrase(
+        decision,
+        scheduler=scheduler,
+        intensity=intensity,
+        keyword=keyword,
+        perception=perception,
+        selector=picker,
+        rng=rng,
+    )
+    emotion = normalize_emotion(decision.emotion)
+    clips = sanitize_action_group(choice.clips)
+    if not clips:
+        return _result(False, choice, intensity, simulate, choice.source or "no_preset_action")
+
+    choice.clips = clips
+    action = choice.action
+    source = choice.source
 
     if execute_robot and not simulate:
-        try:
-            import hiwonder.ActionGroupControl as AGC  # type: ignore
-
-            AGC.runActionGroup(action)
-            AGC.runActionGroup("stand")
-            return TrackAResult(
-                executed=True,
-                action=action,
-                intensity=intensity,
-                simulated=False,
-                detail="robot_executed",
+        now = time.time()
+        stop = is_stop_signal(keyword=keyword, intent=decision.intent)
+        if scheduler is not None:
+            if stop:
+                scheduler.reset()
+            elif not scheduler.can_schedule(now):
+                return _result(False, choice, intensity, True, "%s|cooldown_busy" % source)
+            scheduler.action_cooldown = 6.0 + 4.0 * rng.random()
+            scheduler.queue_action(
+                action, emotion=emotion, intensity=intensity,
+                confidence=decision.confidence, now=time.time(),
             )
-        except Exception as exc:  # noqa: BLE001
-            return TrackAResult(
-                executed=False,
-                action=action,
-                intensity=intensity,
-                simulated=True,
-                detail="robot_exec_failed: %s" % exc,
-            )
+            scheduler.mark_action_started()
+        pause = 0.08 + 0.17 * rng.random()
+        ok, detail = _execute_robot_clips(clips, choice.recovery, pause)
+        if scheduler is not None:
+            fin = time.time()
+            scheduler.mark_action_finished(fin)
+            scheduler.mark_recovery_finished(fin)
+        if ok:
+            picker.commit(choice)
+        return _result(ok, choice, intensity, not ok, "%s|%s" % (source, detail))
 
-    # Mac simulate: advance scheduler marks for logging realism.
     now = time.time()
-    scheduler.queue_action(action, emotion=emotion, intensity=intensity,
-                           confidence=decision.confidence, now=now)
+    queued = scheduler.queue_action(
+        action, emotion=emotion, intensity=intensity,
+        confidence=decision.confidence, now=now,
+    )
+    if queued is None and not own_scheduler:
+        return _result(False, choice, intensity, True, "%s|cooldown_busy" % source)
+    scheduler.action_cooldown = 6.0 + 4.0 * rng.random()
     scheduler.mark_action_started()
     scheduler.mark_action_finished(now + 0.05)
     scheduler.mark_recovery_finished(now + 0.1)
-    return TrackAResult(
-        executed=True,
-        action=action,
-        intensity=intensity,
-        simulated=True,
-        detail="mac_simulated_action_then_stand",
+    picker.commit(choice)
+    return _result(
+        True,
+        choice,
+        intensity,
+        True,
+        "%s|mac_simulated_phrase" % source,
     )

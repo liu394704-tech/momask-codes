@@ -17,6 +17,32 @@ if [[ -f "$TARGET" ]]; then
   exit 0
 fi
 
+# HW* AP has no ModelScope route. Reuse a USB / scp drop if one is sitting around.
+if [[ -x "${ROOT}/scripts/pi_stage_weights_offline.sh" ]]; then
+  bash "${ROOT}/scripts/pi_stage_weights_offline.sh" "${WEIGHTS_SRC:-}" || true
+  if [[ -f "$TARGET" ]]; then
+    ls -lh "$TARGET"
+    echo "staged offline: $TARGET"
+    exit 0
+  fi
+fi
+
+_can_reach_hub() {
+  [[ "${OFFLINE:-0}" == "1" ]] && return 1
+  if ! ip route show default 2>/dev/null | grep -q .; then
+    return 1
+  fi
+  ping -c 1 -W 2 223.5.5.5 >/dev/null 2>&1 || ping -c 1 -W 2 1.1.1.1 >/dev/null 2>&1
+}
+
+if ! _can_reach_hub; then
+  echo "no internet (HW hotspot / OFFLINE=1). Cannot download $FILE." >&2
+  echo "Copy the GGUF onto the Pi over 192.168.149.1, then:" >&2
+  echo "  bash scripts/pi_stage_weights_offline.sh /path/to/folder" >&2
+  echo "Face + 778 phrases still run without this file." >&2
+  exit 0
+fi
+
 echo "== download Qwen2.5-1.5B-Instruct Q4_K_M GGUF =="
 echo "target: $TARGET"
 

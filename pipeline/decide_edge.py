@@ -15,6 +15,7 @@ import re
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
+from .actions import merge_keyword_transcript, sanitize_action_group
 from .schemas import Decision, Perception
 
 SYSTEM_PROMPT = """You are the decision module for a social robot on-device.
@@ -22,16 +23,51 @@ Given multimodal perception JSON, output ONLY one JSON object with fields:
   emotion: one of neutral,happy,sad,angry,fearful,disgust,surprised,unhappy
   intent: one of greeting,comfort_request,play,stop,help,unknown
   confidence: number 0..1
-  action_group: array from [stand,wave,bow,jugong,squat,chest,twist,stepping,back_fast]
+  action_group: array of 1-3 hint names from the social allow-list
+    (wave,bow,jugong,squat,chest,twist,stepping,hand poses, small steps).
+    Track A phrase selector may compose a longer sequence from these hints.
   action_prompt: ONE English HumanML3D-style motion sentence starting with "a person"
   motion_length_hint: int, 0 means auto
   fallback: boolean
   reason: short English note
-Output JSON only, no markdown.
+Priority: extras.keyword and spoken transcript override face emotion.
+If intent is stop, action_group must be ["stand"].
+Locomotion keywords map to go_forward / back_fast / turn_left / turn_right (one or two steps).
+Never output kicks, punches, or wing_chun.
 """
 
 # transcript keyword -> (intent, action_group, action_prompt)
 _TRANSCRIPT_RULES: List[Tuple[Tuple[str, ...], str, List[str], str]] = [
+    (
+        ("停", "不要", "停止", "stop", "enough", "别动"),
+        "stop",
+        ["stand"],
+        "a person stands still with both arms relaxed at the sides",
+    ),
+    (
+        ("前进", "往前", "forward"),
+        "play",
+        ["go_forward"],
+        "a person takes two small steps forward then stands still",
+    ),
+    (
+        ("后退", "往后", "back"),
+        "play",
+        ["back_fast"],
+        "a person takes two small steps backward then stands still",
+    ),
+    (
+        ("左转", "turn left", "turn_left"),
+        "play",
+        ["turn_left"],
+        "a person turns left in place then stands still",
+    ),
+    (
+        ("右转", "turn right", "turn_right"),
+        "play",
+        ["turn_right"],
+        "a person turns right in place then stands still",
+    ),
     (
         ("你好", "hello", "hi", "hey", "早上好", "晚上好"),
         "greeting",
@@ -49,12 +85,6 @@ _TRANSCRIPT_RULES: List[Tuple[Tuple[str, ...], str, List[str], str]] = [
         "play",
         ["chest"],
         "a person excitedly pumps the chest and waves both hands in celebration",
-    ),
-    (
-        ("停", "不要", "停止", "stop", "enough", "别动"),
-        "stop",
-        ["stand"],
-        "a person stands still with both arms relaxed at the sides",
     ),
     (
         ("帮", "帮助", "help", "救"),
@@ -119,10 +149,11 @@ def edge_rule_decide(perception: Perception) -> Decision:
     emo = (perception.vision_emotion or "neutral").strip().lower()
     conf = float(perception.vision_conf or 0.0)
     intensity = (perception.vision_intensity or "mild").strip().lower()
-    transcript = (perception.transcript or "").strip()
+    extras = getattr(perception, "extras", None) or {}
+    keyword = extras.get("keyword")
+    transcript = merge_keyword_transcript(keyword, perception.transcript or "")
     actions = list(getattr(perception, "face_actions", None) or [])
     if not actions:
-        extras = getattr(perception, "extras", None) or {}
         actions = list(extras.get("face_actions") or [])
     action_emo = _emotion_from_actions(actions)
     if action_emo and (emo in ("", "neutral") or conf < 0.50):
@@ -131,6 +162,17 @@ def edge_rule_decide(perception: Perception) -> Decision:
         intensity = "strong" if (
             "laugh_combo" in actions or "big_smile" in actions or "surprise_combo" in actions
         ) else intensity
+    audio_emo = (perception.audio_emotion or extras.get("audio_emotion") or "").strip().lower()
+    audio_conf = float(perception.audio_conf or extras.get("audio_conf") or 0.0)
+    if audio_emo in ("sad", "angry"):
+        audio_emo = "unhappy"
+    used_audio = False
+    if audio_emo in ("happy", "unhappy", "surprised", "neutral") and audio_conf >= 0.35:
+        if not perception.face_found or emo in ("", "neutral") or conf < 0.50:
+            emo = audio_emo
+            conf = max(conf, audio_conf)
+            intensity = "strong" if audio_conf >= 0.55 and audio_emo != "neutral" else intensity
+            used_audio = True
     mild = intensity != "strong"
 
     intent = "unknown"
@@ -144,7 +186,7 @@ def edge_rule_decide(perception: Perception) -> Decision:
         intent, group, prompt = hit
         conf = max(conf, 0.65)
         reason = "edge_rule:transcript"
-    elif not perception.face_found and not transcript:
+    elif not perception.face_found and not transcript and not used_audio:
         fallback = True
         group = ["stand"]
         prompt = ""
@@ -195,6 +237,8 @@ def edge_rule_decide(perception: Perception) -> Decision:
         else:
             reason = "edge_rule:neutral"
 
+    if used_audio:
+        reason = reason + "|audio_ser"
     if actions:
         reason = reason + "|actions:" + ",".join(actions[:6])
 
@@ -209,6 +253,7 @@ def edge_rule_decide(perception: Perception) -> Decision:
         fallback=fallback,
         reason=reason,
         ok=True,
+        extras={"phrase_hint": intent},
     )
 
 
@@ -285,22 +330,29 @@ def edge_llm_decide(perception: Perception, timeout_s: float = 120.0) -> Decisio
     group = data.get("action_group") or []
     if isinstance(group, str):
         group = [group]
+    group = sanitize_action_group(group)
     conf = float(data.get("confidence") or 0.0)
     prompt = str(data.get("action_prompt") or "").strip()
     if prompt and not prompt.lower().startswith("a person"):
         prompt = "a person " + prompt.lstrip()
+    intent = str(data.get("intent") or "unknown")
+    if not group:
+        fb = edge_rule_decide(perception)
+        fb.reason = "edge_llm_empty_group:%s" % fb.reason
+        return fb
 
     return Decision(
         session_id=perception.session_id,
         emotion=str(data.get("emotion") or perception.vision_emotion or "neutral"),
-        intent=str(data.get("intent") or "unknown"),
+        intent=intent,
         confidence=conf,
         action_prompt=prompt,
-        action_group=[str(x) for x in group],
+        action_group=group,
         motion_length_hint=int(data.get("motion_length_hint") or 0),
         fallback=bool(data.get("fallback", False)),
         reason=str(data.get("reason") or ("edge_llm %.2fs" % (time.time() - t0))),
         ok=True,
+        extras={"phrase_hint": intent},
     )
 
 
