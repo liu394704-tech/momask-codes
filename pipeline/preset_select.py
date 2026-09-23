@@ -29,11 +29,21 @@ from .schemas import Decision, Perception
 
 
 # Any window of 10 consecutive phrases must be unique (ban the last 10 ids).
+# The robot log reused turn/idle motions every 4 rounds because a clip was only
+# banned for 3 rounds, and turn_left vs turn_right counted as different.
 PHRASE_HIST = 10
-CLIP_PHRASE_GAP = 3
+CLIP_PHRASE_GAP = 6
+FAMILY_GAP = 4
 TAG_HIST = 6
 TOP_K = 8
-JACCARD_BAN = 0.5
+JACCARD_BAN = 0.34
+
+# Raised hands together with a fold of the torso hit the legs on this body.
+_ARM_UP = frozenset((
+    "wave", "left_hand", "right_hand", "lift_left_hand",
+    "go_hand_up", "go_hand_up1", "chest",
+))
+_FOLD_BODY = frozenset(("bow", "jugong", "squat", "squat_down", "squat_up"))
 
 _SMILE = frozenset(("smile", "big_smile", "laugh_combo"))
 _FROWN = frozenset((
@@ -70,6 +80,43 @@ class PhraseChoice:
     @property
     def action(self) -> str:
         return "+".join(self.clips) if self.clips else ""
+
+
+def clip_family(name: str) -> Optional[str]:
+    """Motions that look the same even when the ActionGroup name differs."""
+    if name.startswith("turn_"):
+        return "turn"
+    if "move" in name:
+        return "side"
+    if name.startswith("go_forward"):
+        return "forward"
+    if name.startswith("back_"):
+        return "back"
+    if name in _ARM_UP:
+        return "hand"
+    if name in ("bow", "jugong"):
+        return "bow"
+    if name.startswith("squat"):
+        return "squat"
+    if name == "twist":
+        return "twist"
+    if name == "stepping":
+        return "step"
+    return None
+
+
+def phrase_families(clips: Sequence[str]) -> Set[str]:
+    found = set()
+    for name in clips:
+        family = clip_family(name)
+        if family:
+            found.add(family)
+    return found
+
+
+def self_collides(clips: Sequence[str]) -> bool:
+    names = set(clips)
+    return bool(names & _ARM_UP) and bool(names & _FOLD_BODY)
 
 
 def clip_jaccard(left: Sequence[str], right: Sequence[str]) -> float:
@@ -237,6 +284,7 @@ class PhraseSelector:
     ):
         self.phrase_hist_n = int(phrase_hist)
         self.clip_gap = int(clip_gap)
+        self.family_gap = int(FAMILY_GAP)
         self.tag_hist_n = int(tag_hist)
         self.top_k = int(top_k)
         self.phrase_hist: Deque[str] = deque(maxlen=self.phrase_hist_n)
@@ -280,11 +328,22 @@ class PhraseSelector:
             reasons.append("action_repeat")
         if self.last_clips and phrase.clips and phrase.clips[0] == self.last_clips[-1]:
             reasons.append("seam")
-        if self.last_clips and clip_jaccard(phrase.clips, self.last_clips) >= JACCARD_BAN:
-            reasons.append("jaccard")
+        recent_phrases = list(self.clip_rounds)[-self.phrase_hist_n:]
+        for prev in recent_phrases:
+            if clip_jaccard(phrase.clips, prev) >= JACCARD_BAN:
+                reasons.append("jaccard")
+                break
         recent = self._recent_clips()
         if recent and set(phrase.clips) & recent:
             reasons.append("clip_gap")
+        families = phrase_families(phrase.clips)
+        recent_families: Set[str] = set()
+        for prev in list(self.clip_rounds)[-self.family_gap:]:
+            recent_families.update(phrase_families(prev))
+        if families and families & recent_families:
+            reasons.append("family")
+        if self_collides(phrase.clips):
+            reasons.append("collide")
         return reasons
 
     def _pick_loco(self, loco_name: str, rng: random.Random) -> PhraseChoice:
@@ -307,6 +366,9 @@ class PhraseSelector:
 
     def _atomic_fallback(self, emotion: str, intent: str, rng: random.Random) -> PhraseChoice:
         recent = self._recent_clips()
+        recent_families: Set[str] = set()
+        for prev in list(self.clip_rounds)[-self.family_gap:]:
+            recent_families.update(phrase_families(prev))
         last = self.last_clips[-1] if self.last_clips else None
         prefer_tags = {
             "greeting": {"greet", "celebrate"},
@@ -325,15 +387,19 @@ class PhraseSelector:
                 continue
             if name in recent or name == last:
                 continue
+            family = clip_family(name)
+            if family and family in recent_families:
+                continue
             if ("fallback_%s" % name) in self.phrase_hist or name in self.action_hist:
                 continue
             hit = 1 if set(clip.tags) & prefer_tags else 0
             ranked.append((hit, name))
         ranked.sort(key=lambda item: (-item[0], item[1]))
         if not ranked:
+            clips = ["stand"] if self.last_clips == ("stand_slow",) else ["stand_slow"]
             return PhraseChoice(
-                phrase_id="fallback_stand_slow",
-                clips=["stand_slow"],
+                phrase_id="fallback_%s" % clips[0],
+                clips=clips,
                 recovery=None,
                 source="phrase_stand",
                 bans=["exhausted"],
@@ -413,7 +479,9 @@ class PhraseSelector:
             loco_ids.update(ids)
         social = [
             p for p in PHRASES
-            if p.id not in loco_ids and not p.id.startswith("loco_")
+            if p.id not in loco_ids
+            and not p.id.startswith("loco_")
+            and not self_collides(p.clips)
         ]
         scored: List[Tuple[float, Phrase, List[str]]] = []
         for phrase in social:

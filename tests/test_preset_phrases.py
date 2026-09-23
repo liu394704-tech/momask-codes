@@ -9,7 +9,12 @@ from collections import defaultdict
 from pipeline.actions import ACTION_ALLOWLIST, BLOCKED_ACTIONS
 from pipeline.preset_catalog import CATALOG, CLIPS
 from pipeline.preset_phrases import PHRASES
-from pipeline.preset_select import PhraseSelector, clip_jaccard
+from pipeline.preset_select import (
+    PhraseSelector,
+    clip_family,
+    clip_jaccard,
+    self_collides,
+)
 from pipeline.schemas import Decision, Perception
 
 
@@ -130,9 +135,39 @@ class DiversityTests(unittest.TestCase):
         for clip, hits in clip_idx.items():
             for prev, nxt in zip(hits, hits[1:]):
                 self.assertGreaterEqual(
-                    nxt - prev, 3,
+                    nxt - prev, 6,
                     "clip %s reused too soon: %s" % (clip, hits),
                 )
+        family_idx = defaultdict(list)
+        for index, choice in enumerate(choices):
+            for family in {clip_family(name) for name in choice.clips}:
+                if family:
+                    family_idx[family].append(index)
+        for family, hits in family_idx.items():
+            for prev, nxt in zip(hits, hits[1:]):
+                self.assertGreaterEqual(
+                    nxt - prev, 4,
+                    "family %s reused too soon: %s" % (family, hits),
+                )
+        for choice in choices:
+            self.assertFalse(self_collides(choice.clips), choice.phrase_id)
+
+    def test_neutral_run_does_not_repeat_a_family(self):
+        selector = PhraseSelector()
+        perc = _perc(emotion="neutral", transcript="", face_actions=[], conf=0.4)
+        dec = _dec(emotion="neutral", intent="unknown", action_group=["stand"], phrase_hint="unknown", conf=0.4)
+        rng = random.Random(1)
+        families = []
+        for _ in range(12):
+            choice = selector.select(perc, dec, intensity="mild", rng=rng)
+            selector.commit(choice)
+            families.append({clip_family(name) for name in choice.clips if clip_family(name)})
+            self.assertFalse(self_collides(choice.clips))
+        for index in range(1, len(families)):
+            window = set()
+            for prev in families[max(0, index - 4):index]:
+                window.update(prev)
+            self.assertFalse(families[index] & window, (index, families[index], window))
 
     def test_stop_clears_history(self):
         selector = PhraseSelector()
