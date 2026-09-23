@@ -22,6 +22,7 @@ from .actions import (
 )
 from .preset_select import PhraseChoice, PhraseSelector, get_default_selector
 from .schemas import Decision, Perception, TrackAResult
+from .tonypi_coords import simulate_clips, summarize_motion
 
 _FUNCTIONS = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -115,6 +116,19 @@ def _execute_robot_clips(
         return False, "robot_exec_failed: %s" % exc
 
 
+def _attach_coords(result: TrackAResult, clips: list, recovery: Optional[str]) -> TrackAResult:
+    """Author 16-servo pulses + mm coordinates after the clip list is fixed."""
+    try:
+        motion = simulate_clips(clips, recovery=recovery)
+    except Exception as exc:  # noqa: BLE001
+        result.coord_summary = "coords_failed: %s" % exc
+        return result
+    result.pulses = [list(p.pulses) for p in motion.poses]
+    result.coords = motion.compact()
+    result.coord_summary = summarize_motion(motion)
+    return result
+
+
 def _result(
     executed: bool,
     choice: Optional[PhraseChoice],
@@ -122,17 +136,22 @@ def _result(
     simulated: bool,
     detail: str,
 ) -> TrackAResult:
-    return TrackAResult(
+    clips = list(choice.clips) if choice else []
+    recovery = choice.recovery if choice else None
+    result = TrackAResult(
         executed=executed,
         action=choice.action if choice else None,
         intensity=intensity,
         simulated=simulated,
         detail=detail,
         phrase_id=choice.phrase_id if choice else None,
-        clips=list(choice.clips) if choice else [],
-        recovery=choice.recovery if choice else None,
+        clips=clips,
+        recovery=recovery,
         bans=list(choice.bans) if choice else [],
     )
+    if clips:
+        _attach_coords(result, clips, recovery)
+    return result
 
 
 def run_track_a(

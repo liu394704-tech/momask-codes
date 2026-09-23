@@ -151,6 +151,10 @@ class TrackAResolveTests(unittest.TestCase):
         for clip in result.clips:
             self.assertIn(clip, ACTION_ALLOWLIST)
         self.assertIn("phrase_select", result.detail)
+        self.assertTrue(result.pulses)
+        self.assertEqual(len(result.pulses[0]), 16)
+        self.assertTrue(result.coord_summary.startswith("coords:"))
+        self.assertIn("head", (result.coords or {}).get("peak_xyz_mm") or {})
 
 
 class MomaskSwitchTests(unittest.TestCase):

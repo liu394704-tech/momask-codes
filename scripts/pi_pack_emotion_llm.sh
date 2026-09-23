@@ -9,6 +9,7 @@ PACK=(
   pipeline/
   tests/test_pi_emotion_llm.py
   tests/test_preset_phrases.py
+  tests/test_tonypi_coords.py
   scripts/pi_install_edge_llm.sh
   scripts/pi_download_qwen_gguf.sh
   scripts/pi_run_emotion_llm.sh

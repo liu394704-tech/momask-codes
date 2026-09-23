@@ -219,6 +219,9 @@ def _log_round(
             "clips": list(getattr(track_a, "clips", None) or []),
             "recovery": getattr(track_a, "recovery", None),
             "bans": list(getattr(track_a, "bans", None) or []),
+            "pulses": list(getattr(track_a, "pulses", None) or []),
+            "coords": getattr(track_a, "coords", None) or {},
+            "coord_summary": getattr(track_a, "coord_summary", "") or "",
         },
         "momask": bool(momask_on),
         "track_b": None,
@@ -266,6 +269,12 @@ def _print_round(perception: Perception, decision: Decision, track_a, path: Path
         getattr(track_a, "recovery", None),
         list(getattr(track_a, "bans", None) or []),
     ))
+    summary = getattr(track_a, "coord_summary", "") or ""
+    if summary:
+        print(summary)
+        peak = ((getattr(track_a, "coords", None) or {}).get("peak_xyz_mm") or {})
+        if peak:
+            print("coords_peak: %s" % peak)
     if momask_on and track_b is not None:
         print("track_b: ran=%s ok=%s dry_run=%s gen=%.2fs joints=%s err=%s" % (
             track_b.ran, track_b.ok, track_b.dry_run,

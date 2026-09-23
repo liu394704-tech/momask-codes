@@ -64,6 +64,9 @@ class TrackAResult:
     clips: List[str] = field(default_factory=list)
     recovery: Optional[str] = None
     bans: List[str] = field(default_factory=list)
+    pulses: List[List[int]] = field(default_factory=list)
+    coords: Dict[str, Any] = field(default_factory=dict)
+    coord_summary: str = ""
 
 
 @dataclass

@@ -149,6 +149,7 @@ WonderEcho 默认 `/dev/ttyUSB0`（可用 `WONDERECHO_PORT` 改）。未插麦�
 Track A 保底不再轮播单个 ActionGroup：视觉 + 听觉打分后选一条 2～3 片段短语
 （手写核心 + 组合扩展，见 `pipeline/preset_phrases.py`），会话内禁止 8 轮内重复同一 `phrase_id`、3 轮内重复同一 clip。
 日志里看 `phrase id=` / `clips=` / `recovery=`。停 / 前进后退转仍走硬规则（短步短语）。
+每个片段在动作名确定之后会补一版 16 路总线脉宽 + 毫米坐标（站立=500，机身 373×186×106 mm，左臂抬手用官方抓取课 14=180/15=260/16=650）。这是按仓库尺寸模拟的坐标层，真机仍播出厂 `.d6a`。日志里看 `coords:` / `coords_peak`。
 
 幻尔自带情绪只有脸（`FaceExpression`），没有听觉情绪。语音情绪要另装开源端侧模型
 `iic/emotion2vec_plus_seed`（FunASR / 魔搭，不是中转站）：
