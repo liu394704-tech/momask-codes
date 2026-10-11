@@ -35,9 +35,9 @@ export default function ArchiveDesk({ onSelect, onResume }: ArchiveDeskProps) {
 
       <button type="button" className="archive-desk-module archive-desk-fragments" data-module="fragments" onClick={() => onSelect('fragments')} aria-label="Open collected fragments">
         <span className="archive-desk-eyebrow">02</span>
-        <strong className="archive-desk-stat">三件.</strong>
-        <span className="archive-desk-stat-label">都和情绪有关。</span>
-        <span className="archive-desk-fragment-facts">机器人、社区，和一盏灯。</span>
+        <strong className="archive-desk-stat">研究.</strong>
+        <span className="archive-desk-stat-label">语义要能变成动作。</span>
+        <span className="archive-desk-fragment-facts">多模态大模型 · 2025.10 至今。</span>
         <CardArrow />
       </button>
 
@@ -48,15 +48,15 @@ export default function ArchiveDesk({ onSelect, onResume }: ArchiveDeskProps) {
           <Pencil size={34} /><Circle size={34} /><Box size={34} />
         </span>
         <span className="archive-desk-craft-copy">调研 / 定义 / 评测</span>
-        <span className="archive-desk-platforms">韶音 · 面壁 · 字节</span>
+        <span className="archive-desk-platforms">蚂蚁 · 韶音 · 面壁</span>
         <CardArrow />
       </button>
 
       <button type="button" className="archive-desk-module archive-desk-perspective" data-module="perspective" onClick={() => onSelect('perspective')} aria-label="Read notes on perspective">
         <span className="archive-desk-eyebrow">04</span>
-        <strong className="archive-desk-module-title">硬件里的<br />情感。</strong>
-        <span className="archive-desk-user-tag">INTJ</span>
-        <span className="archive-desk-user-fact">情绪要能被看见，也要能被做成动作。</span>
+        <strong className="archive-desk-module-title">语义，<br />然后动作。</strong>
+        <span className="archive-desk-user-tag">MLLM</span>
+        <span className="archive-desk-user-fact">肢体表达不该停在一句听得懂的话上。</span>
         <CardArrow />
       </button>
 

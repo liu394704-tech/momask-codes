@@ -23,10 +23,10 @@ export default function GalleryNotes({ layout }: { layout: GalleryNotesLayout })
         <span className="archive-gallery-note-label">{layout.level === 'minimal' ? '05' : 'ARCHIVE / 05'}</span>
         <h2>{layout.level === 'minimal' ? '作品' : <>选中的<br /><em>作品.</em></>}</h2>
         {layout.level === 'full' && <div className="archive-gallery-note-copy">
-          <p>陪伴机器人、城中村社区服务，和一盏靠触感说话的灯。每件都从一个人的情绪或一个社区的不便开始。</p>
-          <p>点开一张，可以看它怎样走到原型。完整履历在桌上的简历纸条里。</p>
+          <p>一件是支付宝 AI 版「阿宝」的资产页，一件是仍在进行的机器人情感动作研究。完整履历在桌上的简历纸条里。</p>
+          <p>研究方案按简历里的写法保留：动作生成、物理安全层，以及仿真里的端到端闭环。</p>
         </div>}
-        {layout.level === 'compact' && <p className="archive-gallery-note-copy">三件作品，<br />都还连着人。</p>}
+        {layout.level === 'compact' && <p className="archive-gallery-note-copy">资产页，<br />和仍在做的研究。</p>}
         {layout.level === 'full' && <span className="archive-gallery-note-foot">再靠近一点 ↗</span>}
       </div>
     </div>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">情感动作</title>
+  <desc id="desc">基于多模态大模型的机器人情感动作生成研究海报。</desc>
+  <rect width="1200" height="900" fill="#ededed"/>
+  <rect x="70" y="78" width="1060" height="744" fill="#fff" stroke="#111" stroke-width="1"/>
+  <text x="98" y="132" font-family="Courier New, PingFang SC, Noto Sans CJK SC, WenQuanYi Micro Hei, sans-serif" font-size="16" letter-spacing="3" fill="#111">01 / RESEARCH</text>
+  <text x="98" y="250" font-family="Georgia, PingFang SC, Noto Sans CJK SC, WenQuanYi Micro Hei, serif" font-size="84" fill="#111">情感动作</text>
+  <text x="102" y="312" font-family="Georgia, PingFang SC, Noto Sans CJK SC, WenQuanYi Micro Hei, serif" font-size="28" fill="#444">听得懂之后，身体也要会表达。</text>
+  <g fill="none" stroke="#111" stroke-width="1.4">
+    <rect x="102" y="400" width="250" height="140"/>
+    <rect x="470" y="400" width="250" height="140"/>
+    <rect x="838" y="400" width="250" height="140"/>
+    <path d="M352 470H470"/>
+    <path d="M720 470H838"/>
+  </g>
+  <g font-family="Courier New, PingFang SC, Noto Sans CJK SC, WenQuanYi Micro Hei, sans-serif" font-size="20" fill="#111" text-anchor="middle">
+    <text x="227" y="468">指令</text>
+    <text x="227" y="498">自然语言</text>
+    <text x="595" y="468">生成</text>
+    <text x="595" y="498">MLD + CLIP</text>
+    <text x="963" y="468">约束</text>
+    <text x="963" y="498">IK 安全层</text>
+  </g>
+  <line x1="102" y1="640" x2="1088" y2="640" stroke="#777"/>
+  <text x="102" y="690" font-family="Courier New, PingFang SC, Noto Sans CJK SC, WenQuanYi Micro Hei, sans-serif" font-size="15" letter-spacing="1.2" fill="#555">2025.10 至今  ·  指令、生成，与物理约束</text>
+  <text x="1088" y="760" text-anchor="end" font-family="Courier New, monospace" font-size="14" fill="#555">001</text>
+</svg>

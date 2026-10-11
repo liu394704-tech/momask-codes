@@ -56,29 +56,31 @@ export default function ResumeDetails() {
         </section>
 
         <section className="archive-resume-section">
-          <h3>实习</h3>
-          <ResumeEntries entries={templateResume.experience} />
-        </section>
-
-        <section className="archive-resume-section">
-          <h3>项目</h3>
-          <ResumeEntries entries={templateResume.projects} />
-        </section>
-
-        <section className="archive-resume-section">
-          <h3>教育</h3>
+          <h3>教育背景</h3>
           <ResumeEntries entries={templateResume.education} />
         </section>
 
         <section className="archive-resume-section">
-          <h3>竞赛</h3>
-          <ul className="archive-resume-bullets">
-            {templateResume.awards.map((item) => <li key={item}>{item}</li>)}
-          </ul>
+          <h3>实习经历</h3>
+          <ResumeEntries entries={templateResume.experience} />
         </section>
 
         <section className="archive-resume-section">
-          <h3>正在做的事</h3>
+          <h3>研究方向</h3>
+          <ResumeEntries entries={templateResume.projects} />
+        </section>
+
+        {templateResume.awards.length > 0 && (
+          <section className="archive-resume-section">
+            <h3>竞赛</h3>
+            <ul className="archive-resume-bullets">
+              {templateResume.awards.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </section>
+        )}
+
+        <section className="archive-resume-section">
+          <h3>个人总结</h3>
           <p>{templateResume.practice}</p>
         </section>
 
