@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1400" viewBox="0 0 1000 1400" role="img" aria-labelledby="title desc">
+  <title id="title">EI 灯</title>
+  <desc id="desc">EI 情感交互灯：六种材质的触摸球与可折叠灯罩。</desc>
+  <rect width="1000" height="1400" fill="#ededed"/>
+  <rect x="80" y="90" width="840" height="1220" fill="#fff" stroke="#111" stroke-width="1"/>
+  <text x="120" y="160" font-family="Courier New, PingFang SC, Noto Sans CJK SC, sans-serif" font-size="15" letter-spacing="3" fill="#111">03 / TOUCH</text>
+  <path d="M500 280 L640 520 H360 Z" fill="none" stroke="#111" stroke-width="1.5"/>
+  <circle cx="500" cy="640" r="78" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <path d="M430 640h140M500 570v140" stroke="#111" stroke-width="1"/>
+  <rect x="360" y="760" width="280" height="16" fill="#111"/>
+  <text x="120" y="920" font-family="Georgia, PingFang SC, Noto Sans CJK SC, serif" font-size="96" fill="#111">EI 灯</text>
+  <text x="124" y="990" font-family="Georgia, PingFang SC, Noto Sans CJK SC, serif" font-size="28" fill="#444">六种材质，一种情绪的传递。</text>
+  <line x1="120" y1="1070" x2="880" y2="1070" stroke="#777"/>
+  <text x="120" y="1130" font-family="Courier New, PingFang SC, Noto Sans CJK SC, sans-serif" font-size="15" letter-spacing="1.5" fill="#555">FIGMA  ·  可折叠灯罩  ·  NCDA 三等奖</text>
+  <text x="880" y="1220" text-anchor="end" font-family="Courier New, monospace" font-size="14" fill="#555">003</text>
+</svg>

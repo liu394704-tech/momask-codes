@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+  <title id="title">社区针灸</title>
+  <desc id="desc">基于城市针灸理念的社区嵌入式服务。</desc>
+  <rect width="900" height="1200" fill="#ededed"/>
+  <circle cx="450" cy="430" r="250" fill="#fff"/>
+  <circle cx="450" cy="430" r="228" fill="none" stroke="#111" stroke-width="1"/>
+  <path d="M450 202V658M222 430H678" stroke="#111" stroke-width="1"/>
+  <circle cx="450" cy="430" r="8" fill="#111"/>
+  <circle cx="450" cy="430" r="46" fill="none" stroke="#111" stroke-width="1"/>
+  <text x="64" y="86" font-family="Courier New, PingFang SC, Noto Sans CJK SC, sans-serif" font-size="15" letter-spacing="3" fill="#111">02 / COMMUNITY</text>
+  <text x="64" y="860" font-family="Georgia, PingFang SC, Noto Sans CJK SC, serif" font-size="84" letter-spacing="-2" fill="#111">社区针灸</text>
+  <text x="68" y="920" font-family="Georgia, PingFang SC, Noto Sans CJK SC, serif" font-size="28" fill="#444">一处小的嵌入，先被用起来。</text>
+  <line x1="64" y1="990" x2="836" y2="990" stroke="#777"/>
+  <text x="64" y="1040" font-family="Courier New, PingFang SC, Noto Sans CJK SC, sans-serif" font-size="15" letter-spacing="1.5" fill="#555">调研  ·  原型  ·  图像识别  ·  路演</text>
+  <text x="836" y="1120" text-anchor="end" font-family="Courier New, monospace" font-size="14" fill="#555">002</text>
+</svg>
