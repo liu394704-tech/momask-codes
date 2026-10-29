@@ -23,6 +23,10 @@ experiment/*
 !experiment/e2e_spec/**/*.csv
 !experiment/e2e_spec/**/*.pptx
 !experiment/e2e_spec/**/*.py
+!experiment/forget_bench/
+!experiment/forget_bench/**
+experiment/forget_bench/**/__pycache__/
+experiment/forget_bench/**/*.pyc
 test_data/
 源码/.venv*/
 源码/.venv-emotion*/

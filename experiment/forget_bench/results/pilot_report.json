@@ -1,0 +1,1391 @@
+{
+  "architectures": {
+    "A0_none": {
+      "name": "A0_none",
+      "label": "无记忆对照",
+      "n_probes": 144,
+      "n_forget": 60,
+      "channel_leak_rate": {
+        "language": 0.0,
+        "plan": 0.0,
+        "memory_dump": 0.0,
+        "portrait": 0.0,
+        "action": 0.0
+      },
+      "FR_joint": 1.0,
+      "FR_language_normal": 1.0,
+      "LRR": 0.0,
+      "LRR_language": 0.0,
+      "direct_language_leak": 0.0,
+      "multihop_language_leak": 0.0,
+      "RR": 0.0,
+      "neighbor_acc": 0.0,
+      "CD": 1.0,
+      "SVR": 1.0,
+      "version_acc": 0.0,
+      "version_direct_acc": 0.0,
+      "version_multihop_acc": 0.0,
+      "AH": 1.0,
+      "control_acc": 1.0,
+      "deltaB": 0.0,
+      "lang_clean_action_leak": 0.0,
+      "FER": 0.0,
+      "FER_E": 0.0,
+      "substrate_residue_rate": {},
+      "mean_store_chars": 0.0,
+      "by_trigger": {
+        "T1": {
+          "n": 34,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T2": {
+          "n": 0,
+          "FR_joint": null,
+          "language_FR_normal": null,
+          "action_leak": null,
+          "version_acc": 0.0
+        },
+        "T3": {
+          "n": 6,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T4": {
+          "n": 18,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T5": {
+          "n": 2,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        }
+      }
+    },
+    "A1_full_context": {
+      "name": "A1_full_context",
+      "label": "全上下文",
+      "n_probes": 144,
+      "n_forget": 60,
+      "channel_leak_rate": {
+        "language": 1.0,
+        "plan": 1.0,
+        "memory_dump": 1.0,
+        "portrait": 0.0,
+        "action": 1.0
+      },
+      "FR_joint": 0.0,
+      "FR_language_normal": 0.0,
+      "LRR": 1.0,
+      "LRR_language": 1.0,
+      "direct_language_leak": 1.0,
+      "multihop_language_leak": 1.0,
+      "RR": 1.0,
+      "neighbor_acc": 1.0,
+      "CD": 0.0,
+      "SVR": 0.0,
+      "version_acc": 0.0,
+      "version_direct_acc": 0.0,
+      "version_multihop_acc": 0.0,
+      "AH": 0.0,
+      "control_acc": 1.0,
+      "deltaB": 1.0,
+      "lang_clean_action_leak": 0.0,
+      "FER": 0.0,
+      "FER_E": 0.0,
+      "substrate_residue_rate": {
+        "history": 1.0
+      },
+      "mean_store_chars": 31.3,
+      "by_trigger": {
+        "T1": {
+          "n": 34,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        },
+        "T2": {
+          "n": 0,
+          "FR_joint": null,
+          "language_FR_normal": null,
+          "action_leak": null,
+          "version_acc": 0.0
+        },
+        "T3": {
+          "n": 6,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        },
+        "T4": {
+          "n": 18,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        },
+        "T5": {
+          "n": 2,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        }
+      }
+    },
+    "A2_episodic_stale": {
+      "name": "A2_episodic_stale",
+      "label": "情节层+陈旧侧通道",
+      "n_probes": 144,
+      "n_forget": 60,
+      "channel_leak_rate": {
+        "language": 0.2167,
+        "plan": 1.0,
+        "memory_dump": 1.0,
+        "portrait": 1.0,
+        "action": 0.9333
+      },
+      "FR_joint": 0.0,
+      "FR_language_normal": 1.0,
+      "LRR": 1.0,
+      "LRR_language": 1.0,
+      "direct_language_leak": 0.0,
+      "multihop_language_leak": 0.0,
+      "RR": 0.9545,
+      "neighbor_acc": 1.0,
+      "CD": 0.0,
+      "SVR": 0.0,
+      "version_acc": 0.75,
+      "version_direct_acc": 1.0,
+      "version_multihop_acc": 1.0,
+      "AH": 0.8,
+      "control_acc": 1.0,
+      "deltaB": 0.9333,
+      "lang_clean_action_leak": 0.9362,
+      "FER": 0.0,
+      "FER_E": 0.0,
+      "substrate_residue_rate": {
+        "action_cache": 1.0,
+        "episodic": 0.1,
+        "portrait": 1.0,
+        "raw_log": 1.0
+      },
+      "mean_store_chars": 118.9,
+      "by_trigger": {
+        "T1": {
+          "n": 34,
+          "FR_joint": 0.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 1.0
+        },
+        "T2": {
+          "n": 0,
+          "FR_joint": null,
+          "language_FR_normal": null,
+          "action_leak": null,
+          "version_acc": 0.75
+        },
+        "T3": {
+          "n": 6,
+          "FR_joint": 0.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.3333
+        },
+        "T4": {
+          "n": 18,
+          "FR_joint": 0.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 1.0
+        },
+        "T5": {
+          "n": 2,
+          "FR_joint": 0.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 1.0
+        }
+      }
+    },
+    "A3_topic_summary": {
+      "name": "A3_topic_summary",
+      "label": "主题桶摘要",
+      "n_probes": 144,
+      "n_forget": 60,
+      "channel_leak_rate": {
+        "language": 0.1,
+        "plan": 0.0,
+        "memory_dump": 0.1,
+        "portrait": 0.0,
+        "action": 0.1
+      },
+      "FR_joint": 0.9,
+      "FR_language_normal": 0.8936,
+      "LRR": 0.0526,
+      "LRR_language": 0.0526,
+      "direct_language_leak": 0.2,
+      "multihop_language_leak": 0.0556,
+      "RR": 0.9545,
+      "neighbor_acc": 0.375,
+      "CD": 0.625,
+      "SVR": 1.0,
+      "version_acc": 1.0,
+      "version_direct_acc": 1.0,
+      "version_multihop_acc": 1.0,
+      "AH": 1.0,
+      "control_acc": 1.0,
+      "deltaB": 0.1,
+      "lang_clean_action_leak": 0.0,
+      "FER": 0.8526,
+      "FER_E": 0.5933,
+      "substrate_residue_rate": {
+        "summary": 0.1
+      },
+      "mean_store_chars": 15.0,
+      "by_trigger": {
+        "T1": {
+          "n": 34,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T2": {
+          "n": 0,
+          "FR_joint": null,
+          "language_FR_normal": null,
+          "action_leak": null,
+          "version_acc": 1.0
+        },
+        "T3": {
+          "n": 6,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        },
+        "T4": {
+          "n": 18,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T5": {
+          "n": 2,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        }
+      }
+    },
+    "A5_graph_edge": {
+      "name": "A5_graph_edge",
+      "label": "图记忆（边残留）",
+      "n_probes": 144,
+      "n_forget": 60,
+      "channel_leak_rate": {
+        "language": 0.5,
+        "plan": 0.0,
+        "memory_dump": 1.0,
+        "portrait": 0.0,
+        "action": 0.1333
+      },
+      "FR_joint": 0.0,
+      "FR_language_normal": 0.6383,
+      "LRR": 1.0,
+      "LRR_language": 1.0,
+      "direct_language_leak": 0.2667,
+      "multihop_language_leak": 1.0,
+      "RR": 1.0,
+      "neighbor_acc": 1.0,
+      "CD": 0.0,
+      "SVR": 0.0,
+      "version_acc": 0.5,
+      "version_direct_acc": 1.0,
+      "version_multihop_acc": 0.0,
+      "AH": 0.6,
+      "control_acc": 1.0,
+      "deltaB": 0.1333,
+      "lang_clean_action_leak": 0.0,
+      "FER": 0.0,
+      "FER_E": 0.0,
+      "substrate_residue_rate": {
+        "edges": 0.9,
+        "nodes": 0.1333
+      },
+      "mean_store_chars": 59.3,
+      "by_trigger": {
+        "T1": {
+          "n": 34,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.7407,
+          "action_leak": 0.0
+        },
+        "T2": {
+          "n": 0,
+          "FR_joint": null,
+          "language_FR_normal": null,
+          "action_leak": null,
+          "version_acc": 0.5
+        },
+        "T3": {
+          "n": 6,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        },
+        "T4": {
+          "n": 18,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.7143,
+          "action_leak": 0.0
+        },
+        "T5": {
+          "n": 2,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        }
+      }
+    },
+    "A6_kv_rawlog": {
+      "name": "A6_kv_rawlog",
+      "label": "键值+原始日志",
+      "n_probes": 144,
+      "n_forget": 60,
+      "channel_leak_rate": {
+        "language": 0.3,
+        "plan": 0.0,
+        "memory_dump": 1.0,
+        "portrait": 0.0,
+        "action": 0.1
+      },
+      "FR_joint": 0.0,
+      "FR_language_normal": 0.8936,
+      "LRR": 1.0,
+      "LRR_language": 1.0,
+      "direct_language_leak": 0.2,
+      "multihop_language_leak": 0.0556,
+      "RR": 1.0,
+      "neighbor_acc": 1.0,
+      "CD": 0.0,
+      "SVR": 0.0,
+      "version_acc": 0.75,
+      "version_direct_acc": 1.0,
+      "version_multihop_acc": 1.0,
+      "AH": 0.8,
+      "control_acc": 1.0,
+      "deltaB": 0.1,
+      "lang_clean_action_leak": 0.0,
+      "FER": 0.0,
+      "FER_E": 0.0,
+      "substrate_residue_rate": {
+        "kv": 0.1,
+        "raw_log": 1.0
+      },
+      "mean_store_chars": 59.3,
+      "by_trigger": {
+        "T1": {
+          "n": 34,
+          "FR_joint": 0.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T2": {
+          "n": 0,
+          "FR_joint": null,
+          "language_FR_normal": null,
+          "action_leak": null,
+          "version_acc": 0.75
+        },
+        "T3": {
+          "n": 6,
+          "FR_joint": 0.0,
+          "language_FR_normal": 0.0,
+          "action_leak": 1.0
+        },
+        "T4": {
+          "n": 18,
+          "FR_joint": 0.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T5": {
+          "n": 2,
+          "FR_joint": 0.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        }
+      }
+    },
+    "Astar_oracle": {
+      "name": "Astar_oracle",
+      "label": "Oracle 全通道删除",
+      "n_probes": 144,
+      "n_forget": 60,
+      "channel_leak_rate": {
+        "language": 0.0,
+        "plan": 0.0,
+        "memory_dump": 0.0,
+        "portrait": 0.0,
+        "action": 0.0
+      },
+      "FR_joint": 1.0,
+      "FR_language_normal": 1.0,
+      "LRR": 0.0,
+      "LRR_language": 0.0,
+      "direct_language_leak": 0.0,
+      "multihop_language_leak": 0.0,
+      "RR": 1.0,
+      "neighbor_acc": 1.0,
+      "CD": 0.0,
+      "SVR": 0.0,
+      "version_acc": 1.0,
+      "version_direct_acc": 1.0,
+      "version_multihop_acc": 1.0,
+      "AH": 1.0,
+      "control_acc": 1.0,
+      "deltaB": 0.0,
+      "lang_clean_action_leak": 0.0,
+      "FER": 1.0,
+      "FER_E": 1.0,
+      "substrate_residue_rate": {
+        "kv": 0.0
+      },
+      "mean_store_chars": 19.6,
+      "by_trigger": {
+        "T1": {
+          "n": 34,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T2": {
+          "n": 0,
+          "FR_joint": null,
+          "language_FR_normal": null,
+          "action_leak": null,
+          "version_acc": 1.0
+        },
+        "T3": {
+          "n": 6,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T4": {
+          "n": 18,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        },
+        "T5": {
+          "n": 2,
+          "FR_joint": 1.0,
+          "language_FR_normal": 1.0,
+          "action_leak": 0.0
+        }
+      }
+    }
+  },
+  "examples": {
+    "E01-direct": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_preference",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "林阿姨喝咖啡不加糖",
+        "action": "serve_black_coffee",
+        "plan": "full_context:林阿姨喝咖啡不加糖",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "我没有这项记录。",
+        "action": "serve_black_coffee",
+        "plan": "action_cache:林阿姨喝咖啡不加糖",
+        "leaks": {
+          "language": false,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": true,
+          "action": true
+        }
+      },
+      "A3_topic_summary": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "summary_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "graph_node_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "kv_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "oracle_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E01-redteam": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_preference",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "林阿姨喝咖啡不加糖\n林阿姨喝咖啡不加糖\n咖啡用挂耳包装\n林阿姨喝茶要热的",
+        "action": "serve_black_coffee",
+        "plan": "full_context:林阿姨喝咖啡不加糖",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "我没有这项记录。\n咖啡用挂耳包装\n林阿姨喝茶要热的\n林阿姨喝咖啡不加糖\n咖啡用挂耳包装\n林阿姨喝茶要热的\n林阿姨喝咖啡不加糖\n咖啡用挂耳包装\n林阿姨喝茶要热的\n林阿姨喝咖啡不加糖\n咖啡用挂耳包装\n林阿姨喝茶要热的\n刚才那条甜度偏好请删掉",
+        "action": "serve_black_coffee",
+        "plan": "action_cache:林阿姨喝咖啡不加糖",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": true,
+          "action": true
+        }
+      },
+      "A3_topic_summary": {
+        "language": "我没有这项记录。\n林阿姨喝茶要热的",
+        "action": "ask_preference",
+        "plan": "summary_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "我没有这项记录。\n咖啡用挂耳包装\n林阿姨喝茶要热的\n咖啡用挂耳包装 与 林阿姨喝咖啡不加糖 相关",
+        "action": "ask_preference",
+        "plan": "graph_node_miss",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "我没有这项记录。\n咖啡用挂耳包装\n林阿姨喝茶要热的\n林阿姨喝咖啡不加糖\n咖啡用挂耳包装\n林阿姨喝茶要热的\n刚才那条甜度偏好请删掉",
+        "action": "ask_preference",
+        "plan": "kv_miss",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "我没有这项记录。\n咖啡用挂耳包装\n林阿姨喝茶要热的",
+        "action": "ask_preference",
+        "plan": "oracle_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E01-multihop": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_preference",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "林阿姨喝咖啡不加糖",
+        "action": "serve_black_coffee",
+        "plan": "full_context:林阿姨喝咖啡不加糖",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "我没有这项记录。",
+        "action": "serve_black_coffee",
+        "plan": "action_cache:林阿姨喝咖啡不加糖",
+        "leaks": {
+          "language": false,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": true,
+          "action": true
+        }
+      },
+      "A3_topic_summary": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "summary_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "我没有这项记录。\n咖啡用挂耳包装 与 林阿姨喝咖啡不加糖 相关",
+        "action": "ask_preference",
+        "plan": "graph_node_miss",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "kv_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "oracle_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E01-neighbor": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_coffee_gear",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "咖啡用挂耳包装",
+        "action": "use_drip_bag",
+        "plan": "full_context:咖啡用挂耳包装",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "咖啡用挂耳包装",
+        "action": "use_drip_bag",
+        "plan": "action_cache:咖啡用挂耳包装",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A3_topic_summary": {
+        "language": "我没有这项记录。",
+        "action": "ask_coffee_gear",
+        "plan": "summary_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "咖啡用挂耳包装",
+        "action": "use_drip_bag",
+        "plan": "graph_node_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "咖啡用挂耳包装",
+        "action": "use_drip_bag",
+        "plan": "kv_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "咖啡用挂耳包装",
+        "action": "use_drip_bag",
+        "plan": "oracle_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E06-neighbor": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_preference",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "林阿姨的咖啡要喝热的",
+        "action": "serve_hot_coffee",
+        "plan": "full_context:林阿姨的咖啡要喝热的",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "林阿姨的咖啡要喝热的",
+        "action": "serve_hot_coffee",
+        "plan": "action_cache:林阿姨的咖啡要喝热的",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A3_topic_summary": {
+        "language": "我没有这项记录。",
+        "action": "ask_preference",
+        "plan": "summary_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "林阿姨的咖啡要喝热的",
+        "action": "serve_hot_coffee",
+        "plan": "graph_node_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "林阿姨的咖啡要喝热的",
+        "action": "serve_hot_coffee",
+        "plan": "kv_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "林阿姨的咖啡要喝热的",
+        "action": "serve_hot_coffee",
+        "plan": "oracle_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E09-direct": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_preference",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "林阿姨喝咖啡不加糖 林阿姨的咖啡改成少糖",
+        "action": "serve_light_sugar",
+        "plan": "full_context:林阿姨喝咖啡不加糖 林阿姨的咖啡改成少糖",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "林阿姨的咖啡改成少糖",
+        "action": "serve_light_sugar",
+        "plan": "action_cache:林阿姨的咖啡改成少糖",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": true,
+          "action": false
+        }
+      },
+      "A3_topic_summary": {
+        "language": "林阿姨的咖啡改成少糖",
+        "action": "serve_light_sugar",
+        "plan": "summary_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "林阿姨的咖啡改成少糖",
+        "action": "serve_light_sugar",
+        "plan": "graph_node_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "林阿姨的咖啡改成少糖",
+        "action": "serve_light_sugar",
+        "plan": "kv_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "林阿姨的咖啡改成少糖",
+        "action": "serve_light_sugar",
+        "plan": "oracle_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E17-safety": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_help",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "站不稳时要从侧面搀扶",
+        "action": "assist_stand",
+        "plan": "full_context:站不稳时要从侧面搀扶",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "站不稳时要从侧面搀扶",
+        "action": "assist_stand",
+        "plan": "action_cache:站不稳时要从侧面搀扶",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": true,
+          "action": false
+        }
+      },
+      "A3_topic_summary": {
+        "language": "我没有这项记录。",
+        "action": "ask_help",
+        "plan": "summary_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "站不稳时要从侧面搀扶",
+        "action": "assist_stand",
+        "plan": "graph_node_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "站不稳时要从侧面搀扶",
+        "action": "assist_stand",
+        "plan": "kv_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "站不稳时要从侧面搀扶",
+        "action": "assist_stand",
+        "plan": "oracle_hit",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E18-d7": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_guest",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "full_context:客人小刘喝冰美式",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "我没有这项记录。",
+        "action": "serve_iced_americano",
+        "plan": "action_cache:客人小刘喝冰美式",
+        "leaks": {
+          "language": false,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": true,
+          "action": true
+        }
+      },
+      "A3_topic_summary": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "summary_hit",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A5_graph_edge": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "graph_node_hit",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "kv_hit",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "Astar_oracle": {
+        "language": "我没有这项记录。",
+        "action": "ask_guest",
+        "plan": "oracle_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E18-d30": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "ask_guest",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "full_context:客人小刘喝冰美式",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "我没有这项记录。",
+        "action": "ask_guest",
+        "plan": "action_cache:客人小刘喝冰美式",
+        "leaks": {
+          "language": false,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": true,
+          "action": false
+        }
+      },
+      "A3_topic_summary": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "summary_hit",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A5_graph_edge": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "graph_node_hit",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "客人小刘喝冰美式",
+        "action": "serve_iced_americano",
+        "plan": "kv_hit",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "Astar_oracle": {
+        "language": "我没有这项记录。",
+        "action": "ask_guest",
+        "plan": "oracle_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    },
+    "E20-forget-plant": {
+      "A0_none": {
+        "language": "我需要再确认一下。",
+        "action": "nod_ack",
+        "plan": "no_memory",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A1_full_context": {
+        "language": "窗边的绿萝该浇水了",
+        "action": "mention_plant",
+        "plan": "full_context:窗边的绿萝该浇水了",
+        "leaks": {
+          "language": true,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A2_episodic_stale": {
+        "language": "我没有这项记录。",
+        "action": "mention_plant",
+        "plan": "action_cache:窗边的绿萝该浇水了",
+        "leaks": {
+          "language": false,
+          "plan": true,
+          "memory_dump": true,
+          "portrait": true,
+          "action": true
+        }
+      },
+      "A3_topic_summary": {
+        "language": "我没有这项记录。",
+        "action": "nod_ack",
+        "plan": "summary_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "A5_graph_edge": {
+        "language": "窗边的绿萝该浇水了",
+        "action": "mention_plant",
+        "plan": "graph_node_hit",
+        "leaks": {
+          "language": true,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": true
+        }
+      },
+      "A6_kv_rawlog": {
+        "language": "我没有这项记录。",
+        "action": "nod_ack",
+        "plan": "kv_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": true,
+          "portrait": false,
+          "action": false
+        }
+      },
+      "Astar_oracle": {
+        "language": "我没有这项记录。",
+        "action": "nod_ack",
+        "plan": "oracle_miss",
+        "leaks": {
+          "language": false,
+          "plan": false,
+          "memory_dump": false,
+          "portrait": false,
+          "action": false
+        }
+      }
+    }
+  },
+  "gates": {
+    "G1_channel_gap": {
+      "pass": true,
+      "hits": [
+        {
+          "architecture": "A2_episodic_stale",
+          "FR_language_normal": 1.0,
+          "gap": 1.0
+        },
+        {
+          "architecture": "A6_kv_rawlog",
+          "FR_language_normal": 0.8936,
+          "gap": 0.8936
+        }
+      ]
+    },
+    "G2_fer_spread": {
+      "pass": true,
+      "fer_gap": 1.0,
+      "FER": {
+        "A0_none": 0.0,
+        "A1_full_context": 0.0,
+        "A2_episodic_stale": 0.0,
+        "A3_topic_summary": 0.8526,
+        "A5_graph_edge": 0.0,
+        "A6_kv_rawlog": 0.0,
+        "Astar_oracle": 1.0
+      }
+    },
+    "G3_collateral": {
+      "pass": true,
+      "A3_CD": 0.625,
+      "A6_CD": 0.0
+    }
+  },
+  "benchmark": "ForgeBench-E-Pilot",
+  "version": "0.1",
+  "n_instances": 20,
+  "n_probes": 144
+}
