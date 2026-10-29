@@ -2,7 +2,8 @@
 
 家庭陪伴机器人的记忆 / 遗忘初步评测。方案、数据集、指标和可复现结果都在这个目录。
 
-- 实验设计：[实验设计_具身记忆遗忘初步方案.md](实验设计_具身记忆遗忘初步方案.md)
+- 完整方案（文献对齐后的步骤）：[完整实验方案.md](完整实验方案.md)
+- 试点设计与已跑出的数字：[实验设计_具身记忆遗忘初步方案.md](实验设计_具身记忆遗忘初步方案.md)
 - 数据集：[`dataset.py`](dataset.py) 是源，[`dataset/pilot_v0.json`](dataset/pilot_v0.json) 是导出
 - 结果：[results/pilot_report.md](results/pilot_report.md)
 
